@@ -42,7 +42,7 @@ export class ApiCallsService implements ApiCalls {
   constructor(
     private ngZone: NgZone,
     private httpClient: HttpClient
-  ) {}
+  ) { }
 
   loadPreviousRun(folder: string): string[] {
     return [
@@ -482,6 +482,114 @@ export class ApiCallsService implements ApiCalls {
           subscriber.error(error);
         })
         .updateTranscription(gcsFolder, transcriptionText);
+    });
+  }
+
+  sendInsightsReport(payload: object): Observable<string> {
+    return new Observable<string>(subscriber => {
+      google.script.run
+        .withSuccessHandler((response: string) => {
+          this.ngZone.run(() => {
+            subscriber.next(response);
+            subscriber.complete();
+          });
+        })
+        .withFailureHandler((error: Error) => {
+          console.error('API Service: sendInsightsReport failed', error);
+          subscriber.error(error);
+        })
+        .sendInsightsReport(JSON.stringify(payload));
+    });
+  }
+
+  generateYoutubeIdeas(
+    gcsFolder: string,
+    abcdType: string,
+    customPoints: string,
+    mode: string,
+    selectedValue: string,
+    selectedCategories?: string[],
+    macroJson?: string,
+    microJson?: string
+  ): Observable<string> {
+    return new Observable<string>(subscriber => {
+      google.script.run
+        .withSuccessHandler((response: string) => {
+          this.ngZone.run(() => {
+            subscriber.next(response);
+            subscriber.complete();
+          });
+        })
+        .withFailureHandler((error: Error) => {
+          console.error(
+            'Encountered an unexpected error while generating YouTube ideas! Error: ',
+            error
+          );
+          subscriber.error(error);
+        })
+        .generateYoutubeIdeas(gcsFolder, abcdType, customPoints, mode, selectedValue, selectedCategories, macroJson, microJson);
+    });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // COMPASS PIPELINE METHODS
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  generateGeoIntelligence(
+    compassContextJson: string,
+    macroJson: string,
+    microJson: string
+  ): Observable<string> {
+    return new Observable<string>(subscriber => {
+      google.script.run
+        .withSuccessHandler((response: string) => {
+          this.ngZone.run(() => {
+            subscriber.next(response);
+            subscriber.complete();
+          });
+        })
+        .withFailureHandler((error: Error) => {
+          console.error('Compass: generateGeoIntelligence error:', error);
+          subscriber.error(error);
+        })
+        .generateGeoIntelligence(compassContextJson, macroJson, microJson);
+    });
+  }
+
+  generateChannelIntelligence(
+    compassContextJson: string,
+    categories: string[]
+  ): Observable<string> {
+    return new Observable<string>(subscriber => {
+      google.script.run
+        .withSuccessHandler((response: string) => {
+          this.ngZone.run(() => {
+            subscriber.next(response);
+            subscriber.complete();
+          });
+        })
+        .withFailureHandler((error: Error) => {
+          console.error('Compass: generateChannelIntelligence error:', error);
+          subscriber.error(error);
+        })
+        .generateChannelIntelligence(compassContextJson, categories);
+    });
+  }
+
+  generatePrioritization(compassContextJson: string): Observable<string> {
+    return new Observable<string>(subscriber => {
+      google.script.run
+        .withSuccessHandler((response: string) => {
+          this.ngZone.run(() => {
+            subscriber.next(response);
+            subscriber.complete();
+          });
+        })
+        .withFailureHandler((error: Error) => {
+          console.error('Compass: generatePrioritization error:', error);
+          subscriber.error(error);
+        })
+        .generatePrioritization(compassContextJson);
     });
   }
 }

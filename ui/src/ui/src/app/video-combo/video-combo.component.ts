@@ -100,7 +100,7 @@ export class VideoComboComponent implements AfterViewInit {
   constructor(
     private snackBar: MatSnackBar,
     private apiCallsService: ApiCallsService
-  ) {}
+  ) { }
 
   loadVideo() {
     if (this.displayMode === 'combo') {
@@ -167,7 +167,7 @@ export class VideoComboComponent implements AfterViewInit {
     // w=whisper, g=gemini, n=no audio
     const folderParts = this.gcsFolder.split('--');
     const hasAudioAnalysis = folderParts.length >= 2 &&
-                             (folderParts[1] === 'w' || folderParts[1] === 'g');
+      (folderParts[1] === 'w' || folderParts[1] === 'g');
 
     if (!hasAudioAnalysis) {
       console.log('Video was not analyzed for voice-over, skipping transcription load');

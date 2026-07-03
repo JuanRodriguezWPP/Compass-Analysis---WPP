@@ -16,11 +16,253 @@ limitations under the License.
 
 /* You can add global styles to this file, and also import other style files */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --wpp-azul: #000050;
+  --wpp-verde: #aef366;
+  --wpp-verde-claro: #effde0;
+  --wpp-morado: #5466fd;
+  --wpp-morado-gris: #666696;
+  --wpp-gris-semioscuro: #cccccc;
+  --wpp-gris-claro: #f2f2f2;
+  --wpp-gris-superclaro: #f9f9f9;
+  --wpp-verde-oscuro: #1b5e20;
+}
+
 html,
 body {
   height: 100%;
 }
 body {
   margin: 0;
-  font-family: 'Google Sans', Roboto, 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', 'Google Sans', Roboto, 'Helvetica Neue', sans-serif;
+  background-color: #f0f2f8;
+  color: #000050;
+}
+
+/* ── Global Dark Theme Overrides for Angular Material ─────────────────── */
+
+/* Expansion panels */
+.mat-expansion-panel {
+  background: #ffffff !important;
+  color: #000050 !important;
+  border: 1px solid rgba(0, 0, 80, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 80, 0.12) !important;
+}
+
+.mat-expansion-panel-header {
+  color: #000050 !important;
+}
+
+.mat-expansion-panel-header-title {
+  color: #000050 !important;
+}
+
+.mat-expansion-panel-header-description {
+  color: rgba(0, 0, 80, 0.5) !important;
+}
+
+.mat-expansion-panel-body {
+  color: #000050 !important;
+}
+
+/* Toolbar */
+.mat-toolbar.mat-primary {
+  background: linear-gradient(135deg, #000050 0%, #000080 100%) !important;
+  border-bottom: 1px solid rgba(177, 253, 67, 0.2);
+  box-shadow: 0 2px 12px rgba(0, 0, 80, 0.4);
+}
+
+/* Form fields */
+.mat-mdc-text-field-wrapper {
+  background-color: rgba(0, 0, 80, 0.05) !important;
+}
+
+.mat-mdc-form-field {
+  color: #000050 !important;
+}
+
+.mdc-text-field--outlined .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline__notch,
+.mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: rgba(0, 0, 80, 0.2) !important;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+  border-color: #000050 !important;
+}
+
+.mat-mdc-input-element,
+.mat-mdc-select-value,
+textarea.mat-mdc-input-element {
+  color: #000050 !important;
+}
+
+.mat-mdc-form-field-label,
+.mdc-floating-label,
+.mat-mdc-select-placeholder {
+  color: rgba(0, 0, 80, 0.55) !important;
+}
+
+.mat-mdc-form-field-icon-prefix .mat-icon {
+  color: rgba(0, 0, 80, 0.5) !important;
+}
+
+/* Select dropdown */
+.mat-mdc-select-panel {
+  background: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(0,0,80,0.15) !important;
+}
+
+.mat-mdc-option {
+  color: #000050 !important;
+}
+
+.mat-mdc-option:hover:not(.mdc-list-item--disabled) {
+  background: rgba(177, 253, 67, 0.12) !important;
+}
+
+/* Buttons */
+.mat-mdc-raised-button.mat-primary {
+  background: #B1FD43 !important;
+  color: #000050 !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 16px rgba(177, 253, 67, 0.35) !important;
+  transition: all 0.3s ease !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover:not([disabled]) {
+  box-shadow: 0 6px 24px rgba(177, 253, 67, 0.55) !important;
+  transform: translateY(-1px);
+  background: #c8ff5a !important;
+}
+
+.mat-mdc-icon-button {
+  color: #000050 !important;
+}
+
+/* Cards */
+.mat-mdc-card {
+  background: #ffffff !important;
+  color: #000050 !important;
+  border: 1px solid rgba(0, 0, 80, 0.1) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0,0,80,0.08) !important;
+}
+
+/* Tabs */
+.mat-mdc-tab-labels {
+  background: transparent !important;
+}
+
+.mat-mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
+  color: rgba(0, 0, 80, 0.45) !important;
+}
+
+.mdc-tab--active .mdc-tab__text-label {
+  color: #000050 !important;
+  font-weight: 600;
+}
+
+.mat-mdc-tab-body-content {
+  color: #000050 !important;
+}
+
+/* Chips */
+.mat-mdc-chip {
+  background: rgba(0, 0, 80, 0.1) !important;
+  color: #000050 !important;
+}
+
+/* Slide toggle */
+.mat-mdc-slide-toggle {
+  color: #000050 !important;
+}
+
+/* Checkbox */
+.mat-mdc-checkbox .mdc-label {
+  color: #000050 !important;
+}
+
+/* Divider */
+.mat-divider {
+  border-color: rgba(0, 0, 80, 0.1) !important;
+}
+
+/* Button toggle group */
+.mat-button-toggle-group {
+  border-color: rgba(0, 0, 80, 0.15) !important;
+}
+
+.mat-button-toggle {
+  background: transparent !important;
+  color: rgba(0, 0, 80, 0.6) !important;
+}
+
+.mat-button-toggle-checked {
+  background: rgba(177, 253, 67, 0.15) !important;
+  color: #000050 !important;
+  font-weight: 600;
+}
+
+/* Sidenav */
+.mat-drawer {
+  background: #f5f6ff !important;
+  color: #000050 !important;
+  border-left: 1px solid rgba(0, 0, 80, 0.08) !important;
+}
+
+.mat-sidenav-container {
+  background: #f0f2f8 !important;
+  color: #000050 !important;
+}
+
+/* Progress bar */
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-color: #B1FD43 !important;
+  --mdc-linear-progress-track-color: rgba(177, 253, 67, 0.2) !important;
+}
+
+/* Spinner */
+.mat-mdc-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: #000050 !important;
+}
+
+/* Slider */
+.mat-mdc-slider {
+  --mdc-slider-active-track-color: #B1FD43 !important;
+  --mdc-slider-inactive-track-color: rgba(0, 0, 80, 0.15) !important;
+  --mdc-slider-handle-color: #000050 !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 80, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 80, 0.35);
+}
+
+/* Stroked buttons */
+.mat-mdc-outlined-button,
+.mat-mdc-button {
+  color: #000050 !important;
+  border-color: rgba(0, 0, 80, 0.2) !important;
 }

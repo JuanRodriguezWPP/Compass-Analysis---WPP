@@ -23,10 +23,10 @@ import {PROMPTS} from './prompts';
  */
 export const CONFIG = {
     cloudStorage: {
-        bucket: '<gcs-bucket>',
+        bucket: 'gen-lang-client-0679842990-vigenair',
         endpointBase: 'https://storage.googleapis.com/storage/v1',
         uploadEndpointBase: 'https://storage.googleapis.com/upload/storage/v1',
-        authenticatedEndpointBase: 'https://storage.mtls.cloud.google.com',
+        authenticatedEndpointBase: 'https://storage.googleapis.com',
         browsingEndpointBase: 'https://console.cloud.google.com/storage/browser',
         files: {
             subtitles: 'input.vtt',
@@ -45,8 +45,8 @@ export const CONFIG = {
     },
     vertexAi: {
         endpoint: 'aiplatform.googleapis.com',
-        projectId: '<gcp-project-id>',
-        location: '<vertexai-region>',
+        projectId: 'gen-lang-client-0679842990',
+        location: 'us-central1',
         quotaLimitDelay: 10 * 1000, // 10s,
         model: 'gemini-2.5-flash',
         modelParams: {
@@ -58,6 +58,8 @@ export const CONFIG = {
             },
         },
         generationPrompt: PROMPTS.generationPrompt,
+        fullVideoEvaluationPrompt: PROMPTS.fullVideoEvaluationPrompt,
+        youtubeIdeasPrompt: PROMPTS.youtubeIdeasPrompt,
         aspectRatioOnlyPrompt: PROMPTS.aspectRatioOnlyPrompt,
         abcdBusinessObjectives: PROMPTS.abcdBusinessObjectives,
         textAssetsGenerationPrompt: PROMPTS.textAssetsGenerationPrompt,

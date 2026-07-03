@@ -28,11 +28,11 @@ interface VertexAiModelParams {
 interface VertexAiGeminiRequest {
   contents: {
     role: 'user';
-    parts: [
-      { text: string },
-      { inlineData: { mimeType: string; data: string } }?,
-      { fileData: { mimeType: string; fileUri: string } }?,
-    ];
+    parts: (
+      | { text: string }
+      | { fileData: { mimeType: string; fileUri: string } }
+      | { inlineData: { mimeType: string; data: string } }
+    )[];
   };
   generationConfig: VertexAiModelParams;
   safetySettings: VertexAiGeminiRequestSafetyThreshold[];
@@ -48,10 +48,10 @@ enum SafetyThreshold {
 
 interface VertexAiGeminiRequestSafetyThreshold {
   category:
-    | 'HARM_CATEGORY_SEXUALLY_EXPLICIT'
-    | 'HARM_CATEGORY_HATE_SPEECH'
-    | 'HARM_CATEGORY_HARASSMENT'
-    | 'HARM_CATEGORY_DANGEROUS_CONTENT';
+  | 'HARM_CATEGORY_SEXUALLY_EXPLICIT'
+  | 'HARM_CATEGORY_HATE_SPEECH'
+  | 'HARM_CATEGORY_HARASSMENT'
+  | 'HARM_CATEGORY_DANGEROUS_CONTENT';
   threshold: SafetyThreshold;
 }
 
@@ -80,8 +80,7 @@ export class VertexHelper {
     AppLogger.debug(response);
     if (response.getResponseCode() === 429) {
       AppLogger.info(
-        `Waiting ${
-          Number(CONFIG.vertexAi.quotaLimitDelay) / 1000
+        `Waiting ${Number(CONFIG.vertexAi.quotaLimitDelay) / 1000
         }s as API quota limit has been reached...`
       );
       Utilities.sleep(CONFIG.vertexAi.quotaLimitDelay);
@@ -90,11 +89,11 @@ export class VertexHelper {
     return JSON.parse(response.getContentText());
   }
 
-  static generate(prompt: string, gcsVideoUrl?: string) {
-    return VertexHelper.multimodalGenerate(prompt, gcsVideoUrl);
+  static generate(prompt: string, gcsVideoUrl?: string, modelParams?: Partial<VertexAiModelParams>, csvBase64?: string) {
+    return VertexHelper.multimodalGenerate(prompt, gcsVideoUrl, modelParams, csvBase64);
   }
 
-  static multimodalGenerate(prompt: string, gcsVideoUrl?: string): string {
+  static multimodalGenerate(prompt: string, gcsVideoUrl?: string, modelParams?: Partial<VertexAiModelParams>, csvBase64?: string): string {
     const endpoint = `${VertexHelper.getEndpointUrlBase()}:streamGenerateContent`;
 
     const request: VertexAiGeminiRequest = {
@@ -102,7 +101,7 @@ export class VertexHelper {
         role: 'user',
         parts: [{ text: prompt }],
       },
-      generationConfig: CONFIG.vertexAi.modelParams,
+      generationConfig: { ...CONFIG.vertexAi.modelParams, ...modelParams },
       safetySettings: [
         {
           category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
@@ -125,6 +124,12 @@ export class VertexHelper {
     if (gcsVideoUrl) {
       request.contents.parts.push({
         fileData: { mimeType: 'video/mp4', fileUri: gcsVideoUrl },
+      });
+    }
+    // If a CSV file was provided as base64, attach it as an inlineData part
+    if (csvBase64) {
+      request.contents.parts.push({
+        inlineData: { mimeType: 'text/csv', data: csvBase64 },
       });
     }
     AppLogger.debug(`Request: ${JSON.stringify(request)}`);

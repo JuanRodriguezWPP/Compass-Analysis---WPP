@@ -35,6 +35,24 @@ export type AbcdBusinessObjective = {
 /** Map of ABCD business objectives. */
 export type AbcdBusinessObjectives = Map<AbcdType, AbcdBusinessObjective>;
 
+/** Brand and client configuration parameters for prompt personalization. */
+export interface BrandParams {
+  /** Commercial name of the brand (e.g., "Coca-Cola") */
+  brandName: string;
+  /** Legal or commercial name of the advertiser (e.g., "The Coca-Cola Company") */
+  advertiserName: string;
+  /** Target country or market (e.g., "Mexico", "Global") */
+  country?: string;
+  /** Primary brand color in hex format (e.g., "#FF0000") */
+  brandColor: string;
+  /** Secondary brand color in hex format (e.g., "#00FF00") */
+  brandColor2?: string;
+  /** Tertiary brand color in hex format (e.g., "#0000FF") */
+  brandColor3?: string;
+  /** Communication tone guidelines (e.g., "Inspiring and close, avoid formal language") */
+  communicationTone: string;
+}
+
 /** Settings for generating video variants. */
 export interface GenerationSettings {
   prompt: string;
@@ -42,6 +60,10 @@ export interface GenerationSettings {
   duration: number;
   demandGenAssets: boolean;
   shortenVideo: boolean;
+  /** Flag to indicate if we are analyzing the full original video instead of generating variants. */
+  fullVideoAnalysis?: boolean;
+  /** Optional brand parameters injected into generation prompts. */
+  brandParams?: BrandParams;
 }
 
 /** Represents an audio/video segment. */
@@ -53,6 +75,7 @@ export interface AvSegment {
   splitting?: boolean;
   played?: boolean;
   segment_screenshot_uri?: string;
+  segment_uri?: string;
 }
 
 /** Response structure for variant generation. */
@@ -63,13 +86,143 @@ export interface GenerateVariantsResponse {
   av_segments: AvSegment[];
   description: string;
   score: number;
-  reasoning: string;
+  abcd: {
+    attention: string;
+    branding: string;
+    connection: string;
+    direction: string;
+  };
   duration: string;
   variants?: VariantFormats;
   render_settings?: RenderSettings;
   images?: VariantImageAssets;
   texts?: VariantTextAsset[];
   original_format?: FormatType;
+  strengths?: string[];
+  weaknesses?: string[];
+}
+
+/** Response structure for YouTube Content Ideas. */
+export interface YoutubeIdeaItem {
+  title: string;
+  description: string;
+  video_prompt?: string;
+}
+
+/** A single creative idea for a geo zone */
+export interface GeoZoneIdea {
+  title: string;
+  description: string;
+  video_prompt?: string;
+}
+
+/** A geographic audience cluster zone */
+export interface GeoZoneAudiencia {
+  id_cluster: string;
+  descripcion: string;
+  coordenadas_asociadas: string[];
+  sitios_aledanos: string[];
+  perfil_audiencia_sugerido: string;
+  ganchos_creativos_ctv: string[];
+  ideas: GeoZoneIdea[];
+}
+
+/** Top-level geokey insights returned by Gemini */
+export interface GeoKeyInsights {
+  pais: string;
+  ciudad: string;
+  estrategia_geotargeting: string;
+  zonas_de_audiencia: GeoZoneAudiencia[];
+}
+
+export interface YoutubeIdeasResponse {
+  creative_services_script: string;
+  wpp_open_prompt_json: any;
+  relevant_frame_segment_indices: number[];
+  insights: {
+    ideas: YoutubeIdeaItem[];
+    /** Per-category: key = category name, value = array of 3 ideas */
+    categoryIdeas?: Record<string, YoutubeIdeaItem[]>;
+    /** Per-geozone: structured geographic clustering with 3 ideas per zone */
+    geoKeyInsights?: GeoKeyInsights;
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPASS DATA — Mega JSON que orquesta el pipeline de análisis de 7 pasos
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface CompassGeoOportunidad {
+  zona: string;
+  audiencia: number;
+  coordenada_central: string;
+  estrategia: string;
+  prioridad: number;
+}
+
+export interface CompassCategoriaContexto {
+  categoria: string;
+  afinidad: string;
+  insights: string[];
+  evidencias: string[];
+  recomendaciones: string[];
+}
+
+export interface CompassOportunidad {
+  titulo: string;
+  evidencia: string;
+  impacto: 'Alto' | 'Medio' | 'Bajo';
+  prioridad: number;
+  recomendacion: string;
+}
+
+export interface CompassData {
+  meta: {
+    brand: string;
+    campaign: string;
+    country: string;
+    objective: string;
+    date: string;
+    video_name: string;
+    video_duration: string;
+    internal_ref: string;
+  };
+  contexto_campania: {
+    nombre_campania: string;
+    objetivo_negocio: string;
+    audiencia: string;
+    tono: string;
+    descripcion: string;
+    lineamientos_marca: string;
+    consideraciones: string;
+    contexto_mercado: string;
+  };
+  evaluacion_creativa: {
+    score: number;
+    score_max: number;
+    score_label: string;
+    abcd: {
+      attention: string;
+      branding: string;
+      connection: string;
+      direction: string;
+    };
+    strengths: string[];
+    weaknesses: string[];
+    descripcion: string;
+  } | null;
+  geo_intelligence: {
+    macro_estrategias: CompassGeoOportunidad[];
+    micro_oportunidades: CompassGeoOportunidad[];
+  } | null;
+  channel_intelligence: {
+    pregunta: string;
+    contextos: CompassCategoriaContexto[];
+  } | null;
+  prioridades: {
+    pregunta: string;
+    oportunidades: CompassOportunidad[];
+  } | null;
 }
 
 /** Response structure for fetching previous runs. */
@@ -111,7 +264,12 @@ export interface RenderQueueVariant {
   title: string;
   description: string;
   score: number;
-  score_reasoning: string;
+  abcd: {
+    attention: string;
+    branding: string;
+    connection: string;
+    direction: string;
+  };
   render_settings: RenderSettings;
   duration: string;
   userSelection: boolean;
@@ -159,7 +317,12 @@ export interface RenderedVariant {
   title: string;
   description: string;
   score: number;
-  reasoning: string;
+  abcd: {
+    attention: string;
+    branding: string;
+    connection: string;
+    direction: string;
+  };
   variants?: VariantFormats;
   duration: string;
   scenes: string;
@@ -272,4 +435,15 @@ export interface ApiCalls {
     gcsFolder: string,
     transcriptionText: string
   ): Observable<boolean>;
+  generateYoutubeIdeas(
+    gcsFolder: string,
+    abcdType: string,
+    customPoints: string,
+    mode: string,
+    selectedValue: string,
+    selectedCategories?: string[],
+    macroJson?: string,
+    microJson?: string
+  ): Observable<string>;
+  sendInsightsReport(payload: object): Observable<string>;
 }

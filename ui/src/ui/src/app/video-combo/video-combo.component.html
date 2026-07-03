@@ -19,141 +19,93 @@ limitations under the License.
 </div>
 <div *ngIf="displayMode === 'combo'" class="row">
   @if (showApprovalStatus) {
-    <span class="approve-headline">Approval Status</span>
+  <span class="approve-headline">Approval Status</span>
   }
-  <mat-button-toggle-group
-    #variantGroup="matButtonToggleGroup"
-    [disabled]="loading"
-    (change)="onChangeVideo($event)"
-    [value]="selectedFormat"
-    hideSingleSelectionIndicator="true"
-    [style.margin-right]="showApprovalStatus ? 'auto' : ''"
-    [style.margin-left]="showApprovalStatus ? '-132px' : ''"
-  >
+  <mat-button-toggle-group #variantGroup="matButtonToggleGroup" [disabled]="loading" (change)="onChangeVideo($event)"
+    [value]="selectedFormat" hideSingleSelectionIndicator="true" [style.margin-right]="showApprovalStatus ? 'auto' : ''"
+    [style.margin-left]="showApprovalStatus ? '-132px' : ''">
     @for (ratio of aspectRatios; track ratio) {
-      <mat-button-toggle
-        [value]="ratio"
-        [disabled]="!combo.variants || !combo.variants[ratio]"
-        [class.original-format]="combo.original_format === ratio"
-      >
-        <span style="font-size: 12px; font-weight: 500">{{ ratio }}{{ combo.original_format === ratio ? ' (Original)' : '' }}</span>
-      </mat-button-toggle>
+    <mat-button-toggle [value]="ratio" [disabled]="!combo.variants || !combo.variants[ratio]"
+      [class.original-format]="combo.original_format === ratio">
+      <span style="font-size: 12px; font-weight: 500">{{ ratio }}{{ combo.original_format === ratio ? ' (Original)' : ''
+        }}</span>
+    </mat-button-toggle>
     }
   </mat-button-toggle-group>
 </div>
 <div *ngIf="displayMode === 'combo'" class="row" style="align-items: normal">
   @if (showApprovalStatus) {
-    <div
-      class="approve-container"
-      (click)="toggleApprovalStatus(combo.variants![selectedFormat]!)"
-    >
-      <mat-icon
-        class="approve-icon"
-        [matTooltip]="
+  <div class="approve-container" (click)="toggleApprovalStatus(combo.variants![selectedFormat]!)">
+    <mat-icon class="approve-icon" [matTooltip]="
           combo.variants![selectedFormat]!.approved
             ? 'Remove approval'
             : 'Approve video format'
-        "
-        >{{
-          combo.variants![selectedFormat]!.approved
-            ? 'check_box'
-            : 'check_box_outline_blank'
-        }}</mat-icon
-      >
-    </div>
+        ">{{
+      combo.variants![selectedFormat]!.approved
+      ? 'check_box'
+      : 'check_box_outline_blank'
+      }}</mat-icon>
+  </div>
   }
-  <video
-    class="mat-elevation-z8"
-    [style.margin-right]="showApprovalStatus ? 'auto' : ''"
-    #videoElem
-    controls
-  >
+  <video class="mat-elevation-z8" [style.margin-right]="showApprovalStatus ? 'auto' : ''" #videoElem controls>
     <source src="" />
   </video>
 </div>
 
-<div class="row" style="justify-content: start">
-  Segments: {{ combo.scenes }}
+<div class="row info-chip" style="justify-content: start" *ngIf="displayMode === 'combo'">
+  <mat-icon class="info-icon">movie</mat-icon> Segments: {{ combo.scenes }}
 </div>
-<div
-  class="row"
-  style="justify-content: start; margin-top: 0"
-  *ngIf="combo.render_settings"
->
-  Audio:
+<div class="row info-chip" style="justify-content: start; margin-top: 0" *ngIf="displayMode === 'combo' && combo.render_settings">
+  <mat-icon class="info-icon">audiotrack</mat-icon> Audio:
   {{
-    combo.render_settings.use_continuous_audio
-      ? 'Overlay all' +
-        (combo.render_settings.overlay_type
-          ? ' (' + combo.render_settings.overlay_type.replace('_', ' ') + ')'
-          : '')
-      : combo.render_settings.use_music_overlay
-        ? 'Overlay music' +
-          (combo.render_settings.overlay_type
-            ? ' (' + combo.render_settings.overlay_type.replace('_', ' ') + ')'
-            : '') +
-          ($any(combo.render_settings).use_blanking_fill ? ' + Blanking fill' : '')
-      : ''
+  combo.render_settings.use_continuous_audio
+  ? 'Overlay all' +
+  (combo.render_settings.overlay_type
+  ? ' (' + combo.render_settings.overlay_type.replace('_', ' ') + ')'
+  : '')
+  : combo.render_settings.use_music_overlay
+  ? 'Overlay music' +
+  (combo.render_settings.overlay_type
+  ? ' (' + combo.render_settings.overlay_type.replace('_', ' ') + ')'
+  : '') +
+  ($any(combo.render_settings).use_blanking_fill ? ' + Blanking fill' : '')
+  : ''
   }}
 </div>
-<div class="row" style="justify-content: start">
+<div class="row info-chip description-chip" style="justify-content: start" *ngIf="displayMode === 'combo'">
   {{ combo.description }}
 </div>
-<div *ngIf="displayMode === 'variant'">
-  <div style="font-size: 2.5em" [ngClass]="'score-' + combo.score" class="row">
-    Score: {{ combo.score }}
-  </div>
-  <div
-    class="row"
-    style="white-space: pre-line; margin-top: 0px"
-    [innerHTML]="marked.parse(combo.reasoning)"
-  ></div>
-</div>
-<div
-  *ngIf="images.length || (combo && combo.texts)"
-  class="row"
-  style="
+
+<div *ngIf="images.length || (combo && combo.texts)" class="row" style="
     align-items: normal;
     justify-content: center;
     gap: 32px;
     flex: 1;
     margin-bottom: 32px;
-  "
->
+  ">
   <div *ngIf="images.length" class="row" style="flex-direction: column">
     <span class="assets-header">Image assets</span>
     <div class="filmstrip">
       @for (image of images; track image; let i = $index) {
-        <div class="filmstrip-row">
-          <div style="display: flex; position: relative">
-            @if (showApprovalStatus) {
-              <div (click)="toggleApprovalStatus(image)">
-                <mat-icon
-                  class="approve-icon shadow"
-                  [matTooltip]="
+      <div class="filmstrip-row">
+        <div style="display: flex; position: relative">
+          @if (showApprovalStatus) {
+          <div (click)="toggleApprovalStatus(image)">
+            <mat-icon class="approve-icon shadow" [matTooltip]="
                     image.approved ? 'Remove approval' : 'Approve image asset'
-                  "
-                  >{{
-                    image.approved ? 'check_box' : 'check_box_outline_blank'
-                  }}</mat-icon
-                >
-              </div>
-            }
-            <img
-              class="filmstrip-img {{ selectedFormat }}"
-              src="{{ image.entity }}"
-            />
+                  ">{{
+              image.approved ? 'check_box' : 'check_box_outline_blank'
+              }}</mat-icon>
           </div>
+          }
+          <img class="filmstrip-img {{ selectedFormat }}" src="{{ image.entity }}" />
         </div>
+      </div>
       }
     </div>
   </div>
 
-  <div
-    *ngIf="combo && combo.texts"
-    class="row"
-    style="flex-direction: column; padding-right: 8px"
-  >
+  <div *ngIf="combo && combo.texts" class="row" style="flex-direction: column; padding-right: 8px">
     <div class="text-assets-row">
       <div style="margin-right: auto"></div>
       <div>
@@ -164,53 +116,35 @@ limitations under the License.
           <mat-label>Target Language</mat-label>
           <input matInput [(ngModel)]="textAssetsLanguage" />
         </mat-form-field>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="generateTextAssets()"
-          [disabled]="!textAssetsLanguage || loading || comboLoading"
-        >
+        <button mat-raised-button color="primary" (click)="generateTextAssets()"
+          [disabled]="!textAssetsLanguage || loading || comboLoading">
           <mat-icon fontIcon="refresh">
-            <span class="cdk-visually-hidden"
-              >Regenerate all text assets</span
-            > </mat-icon
-          >Regenerate all
+            <span class="cdk-visually-hidden">Regenerate all text assets</span> </mat-icon>Regenerate all
         </button>
       </div>
     </div>
-    <mat-progress-bar
-      *ngIf="comboLoading"
-      mode="indeterminate"
-    ></mat-progress-bar>
-    <mat-table
-      [dataSource]="combo.texts"
-      class="mat-elevation-z8"
-      [style.background-color]="comboLoading ? 'lightgrey' : ''"
-    >
+    <mat-progress-bar *ngIf="comboLoading" mode="indeterminate"></mat-progress-bar>
+    <mat-table [dataSource]="combo.texts" class="mat-elevation-z8"
+      [style.background-color]="comboLoading ? 'lightgrey' : ''">
       <ng-container matColumnDef="position">
         <mat-header-cell *matHeaderCellDef>
           {{ showApprovalStatus ? 'Approval Status' : 'No.' }}
         </mat-header-cell>
         <mat-cell *matCellDef="let element; let i = index">
           @if (showApprovalStatus) {
-            <div (click)="toggleApprovalStatus(element)">
-              <mat-icon
-                class="approve-icon"
-                [class]="comboLoading ? 'approve-icon-disabled' : ''"
-                [matTooltip]="
+          <div (click)="toggleApprovalStatus(element)">
+            <mat-icon class="approve-icon" [class]="comboLoading ? 'approve-icon-disabled' : ''" [matTooltip]="
                   comboLoading
                     ? ''
                     : element.approved
                       ? 'Remove approval'
                       : 'Approve text asset'
-                "
-                >{{
-                  element.approved ? 'check_box' : 'check_box_outline_blank'
-                }}</mat-icon
-              >
-            </div>
+                ">{{
+              element.approved ? 'check_box' : 'check_box_outline_blank'
+              }}</mat-icon>
+          </div>
           } @else {
-            {{ i + 1 }}
+          {{ i + 1 }}
           }
         </mat-cell>
       </ng-container>
@@ -218,21 +152,16 @@ limitations under the License.
         <mat-header-cell *matHeaderCellDef> Headline </mat-header-cell>
         <mat-cell *matCellDef="let element">
           @if (element.editable) {
-            <mat-form-field *ngIf="element.editable" style="width: 100%">
-              <input matInput type="text" [(ngModel)]="element.headline" />
-              @if (element.headline) {
-                <button
-                  matSuffix
-                  mat-icon-button
-                  aria-label="Clear"
-                  (click)="element.headline = ''"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              }
-            </mat-form-field>
+          <mat-form-field *ngIf="element.editable" style="width: 100%">
+            <input matInput type="text" [(ngModel)]="element.headline" />
+            @if (element.headline) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="element.headline = ''">
+              <mat-icon>close</mat-icon>
+            </button>
+            }
+          </mat-form-field>
           } @else {
-            <span [innerHTML]="marked.parse(element.headline)"></span>
+          <span [innerHTML]="marked.parse(element.headline)"></span>
           }
         </mat-cell>
       </ng-container>
@@ -240,21 +169,16 @@ limitations under the License.
         <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
         <mat-cell *matCellDef="let element" style="white-space: pre-line">
           @if (element.editable) {
-            <mat-form-field *ngIf="element.editable" style="width: 100%">
-              <input matInput type="text" [(ngModel)]="element.description" />
-              @if (element.description) {
-                <button
-                  matSuffix
-                  mat-icon-button
-                  aria-label="Clear"
-                  (click)="element.description = ''"
-                >
-                  <mat-icon>close</mat-icon>
-                </button>
-              }
-            </mat-form-field>
+          <mat-form-field *ngIf="element.editable" style="width: 100%">
+            <input matInput type="text" [(ngModel)]="element.description" />
+            @if (element.description) {
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="element.description = ''">
+              <mat-icon>close</mat-icon>
+            </button>
+            }
+          </mat-form-field>
           } @else {
-            <span [innerHTML]="marked.parse(element.description)"></span>
+          <span [innerHTML]="marked.parse(element.description)"></span>
           }
         </mat-cell>
       </ng-container>
@@ -263,35 +187,23 @@ limitations under the License.
         <mat-cell *matCellDef="let element; let i = index">
           <div class="text-actions">
             @if (element.editable) {
-              <span
-                (click)="
+            <span (click)="
                   element.editable = comboLoading ? element.editable : false
-                "
-                ><mat-icon matTooltip="Save row">save</mat-icon></span
-              >
+                "><mat-icon matTooltip="Save row">save</mat-icon></span>
             } @else {
-              <span
-                (click)="
+            <span (click)="
                   element.editable = comboLoading ? element.editable : true
-                "
-                ><mat-icon matTooltip="Edit row">edit</mat-icon></span
-              >
+                "><mat-icon matTooltip="Edit row">edit</mat-icon></span>
             }
-            <span (click)="regenerateText(element)"
-              ><mat-icon matTooltip="Regenerate row">refresh</mat-icon></span
-            >
+            <span (click)="regenerateText(element)"><mat-icon matTooltip="Regenerate row">refresh</mat-icon></span>
           </div>
         </mat-cell>
       </ng-container>
-      <mat-header-row
-        *matHeaderRowDef="['position', 'headline', 'description', 'actions']"
-      ></mat-header-row>
-      <mat-row
-        *matRowDef="
+      <mat-header-row *matHeaderRowDef="['position', 'headline', 'description', 'actions']"></mat-header-row>
+      <mat-row *matRowDef="
           let row;
           columns: ['position', 'headline', 'description', 'actions']
-        "
-      ></mat-row>
+        "></mat-row>
     </mat-table>
   </div>
 </div>

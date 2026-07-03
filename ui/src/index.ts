@@ -399,11 +399,49 @@ function updateDataJsonWithTranscription(gcsFolder: string, transcriptionData: V
   );
 }
 
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function generateYoutubeIdeas(
+  gcsFolder: string,
+  abcdType: string,
+  customPoints: string,
+  mode: string,
+  selectedValue: string,
+  selectedCategories?: string[],
+  macroJson?: string,
+  microJson?: string
+) {
+  return GenerationHelper.generateYoutubeIdeas(gcsFolder, abcdType, customPoints, mode, selectedValue, selectedCategories, macroJson, microJson);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function generateGeoIntelligence(
+  compassContextJson: string,
+  macroJson: string,
+  microJson: string
+): string {
+  return GenerationHelper.generateGeoIntelligence(compassContextJson, macroJson, microJson);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function generateChannelIntelligence(
+  compassContextJson: string,
+  categories: string[]
+): string {
+  return GenerationHelper.generateChannelIntelligence(compassContextJson, categories);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function generatePrioritization(compassContextJson: string): string {
+  return GenerationHelper.generatePrioritization(compassContextJson);
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function doGet(e: GoogleAppsScript.Events.DoGet) {
   const output = HtmlService.createTemplateFromFile('ui')
     .evaluate()
-    .setTitle('ViGenAiR - Recrafting Video Ads with Generative AI')
+    .setTitle('Creative Services WPP')
     .setFaviconUrl(
       'https://services.google.com/fh/files/misc/vigenair_logo.png'
     );

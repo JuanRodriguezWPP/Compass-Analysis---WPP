@@ -21,6 +21,7 @@ limitations under the License.
 >
   <div
     cdkDropList
+    [cdkDropListOrientation]="segmentMode === 'preview' ? 'horizontal' : 'vertical'"
     cdkDropListAutoScrollStep="50"
     [cdkDropListDisabled]="
       !this.draggable || this.segmentMode !== 'preview' || !this.allowSelection
@@ -71,7 +72,7 @@ limitations under the License.
                 : ''
             "
             cdkDrag
-            cdkDragLockAxis="y"
+            [cdkDragLockAxis]="segmentMode === 'preview' ? 'x' : 'y'"
             cdkDragBoundary=".filmstrip"
             [cdkDragDisabled]="
               !draggable ||

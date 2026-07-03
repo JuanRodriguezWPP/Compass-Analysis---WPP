@@ -1,1 +1,16 @@
-
+node_modules/
+src/
+build/
+**/*.ts
+**/*.mjs
+**/*.sh
+package.json
+package-lock.json
+tsconfig.json
+rollup.config.mjs
+deploy-ui.mjs
+jest.config.json
+.eslintrc.json
+.prettierrc.json
+README.md
+LICENSE

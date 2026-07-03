@@ -42,7 +42,7 @@ for (const filename of files) {
     const newPath = path.join(cwd, 'dist', newName);
     // Add a <script> tag around the js code
     const jsContent = fs.readFileSync(oldPath).toString();
-    fs.writeFileSync(newPath, `<script type="text/javascript">\n${jsContent}\n</script>`);
+    fs.writeFileSync(newPath, `<script type="module">\n${jsContent}\n</script>`);
   } else {
     newName = path.format({...path.parse(filename), base: '', ext: '.html'});
     const newPath = path.join(cwd, 'dist', newName);
