@@ -529,7 +529,7 @@ limitations under the License.
         </ng-template>
 
         <!-- PROGRESS SIMULATION VIEW -->
-        <div class="ca-progress-layout" *ngIf="isAnalysisInProgress">
+        <div class="ca-progress-layout" [hidden]="!isAnalysisInProgress">
 
           <!-- Left Column -->
           <div class="ca-progress-left">
@@ -769,12 +769,15 @@ limitations under the License.
           <!-- Right Column -->
           <div class="ca-progress-right">
             <div class="ca-progress-card">
-              <div class="ca-progress-video-thumb">
-                <div class="ca-progress-thumb-placeholder" *ngIf="!selectedFileThumbnail">
-                  <mat-icon>play_circle_outline</mat-icon>
-                </div>
-                <img *ngIf="selectedFileThumbnail" [src]="selectedFileThumbnail" class="ca-progress-thumb-image"
-                  alt="Video Thumbnail">
+              <!-- VIDEO PLAYER MOVED HERE -->
+              <div class="ca-progress-video-thumb video-container" style="position: relative; padding: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000; height: 250px;">
+                <video class="mat-elevation-z8" #previewVideoElem autoplay controls disablePictureInPicture style="width: 100%; height: 100%; object-fit: contain;">
+                  <source [src]="videoPath" />
+                  <track label="Voice-over" kind="subtitles" #previewTrackElem default />
+                </video>
+                <canvas #magicCanvas style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+                <div #canvasDragElement class="canvas-drag-element visibility-hidden" cdkDrag cdkDragLockAxis="x"
+                  cdkDragBoundary=".video-container" [cdkDragFreeDragPosition]="dragPosition"></div>
               </div>
 
               <div class="ca-progress-card-title">{{ selectedFile?.name || selectedHistoryRun || 'Video_Subido.mp4' }}
@@ -786,7 +789,7 @@ limitations under the License.
                   <mat-icon>schedule</mat-icon>
                   <div>
                     <div class="ca-progress-detail-lbl">Duración</div>
-                    <div class="ca-progress-detail-val">{{ selectedFile ? selectedFileDurationStr : 'N/A' }}</div>
+                    <div class="ca-progress-detail-val">{{ selectedFile || selectedHistoryRun ? selectedFileDurationStr : 'N/A' }}</div>
                   </div>
                 </div>
                 <div class="ca-progress-detail-col">
@@ -800,7 +803,7 @@ limitations under the License.
                   <mat-icon>aspect_ratio</mat-icon>
                   <div>
                     <div class="ca-progress-detail-lbl">Resolución</div>
-                    <div class="ca-progress-detail-val">{{ selectedFile ? selectedFileResolutionStr : 'N/A' }}</div>
+                    <div class="ca-progress-detail-val">{{ selectedFile || selectedHistoryRun ? selectedFileResolutionStr : 'N/A' }}</div>
                   </div>
                 </div>
                 <div class="ca-progress-detail-col">
@@ -950,51 +953,10 @@ limitations under the License.
           </div>
 
           <div class="preview-video-row" style="align-items: flex-start; margin-top: 0;">
-            <div [hidden]="segmentModeToggle.value !== 'preview'" class="video-container"
-              style="flex: 1.5; align-self: flex-start;">
-              <video class="mat-elevation-z8" #previewVideoElem autoplay controls disablePictureInPicture>
-                <source [src]="videoPath" />
-                <track label="Voice-over" kind="subtitles" #previewTrackElem default />
-              </video>
-              <canvas #magicCanvas></canvas>
-              <div #canvasDragElement class="canvas-drag-element visibility-hidden" cdkDrag cdkDragLockAxis="x"
-                cdkDragBoundary=".video-container" [cdkDragFreeDragPosition]="dragPosition"></div>
-            </div>
 
             <!-- RIGHT COLUMN: Analysis & Rating -->
             <div class="rating-sidebar column"
-              style="flex: 0 0 720px; max-height: 80vh; overflow-y: auto; padding: 16px; border-radius: 8px; background-color: #fcfcfc; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-              <h3 style="margin-top: 0; margin-bottom: 16px; color: #333;">Análisis de Video</h3>
-              <mat-form-field appearance="outline" subscriptSizing="dynamic" floatLabel="always" style="width: 100%;">
-                <mat-label>Objetivo dirigido</mat-label>
-                <mat-select [(ngModel)]="selectedFullVideoObjective">
-                  <mat-select-trigger>
-                    {{ getFullVideoObjectiveLabel() }}
-                  </mat-select-trigger>
-                  @for (obj of fullVideoObjectives; track obj.value) {
-                  <mat-option [value]="obj.value" class="objective-option">
-                    <div class="objective-option-content">
-                      <span class="objective-option-label">{{ obj.label }}</span>
-                      <span class="objective-option-desc">{{ obj.description }}</span>
-                    </div>
-                  </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-              <button type="button" mat-raised-button color="primary" (click)="analyzeFullVideo()" [disabled]="loading"
-                style="width: 100%; margin-top: 8px; margin-bottom: 24px;">
-                <mat-icon>analytics</mat-icon>Analizar video
-              </button>
-
-              <!-- Waiting Container -->
-              <div *ngIf="!variants || variants.length === 0"
-                style="border: 2px dashed #ccc; border-radius: 8px; padding: 32px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <mat-icon
-                  style="font-size: 48px; width: 48px; height: 48px; color: #999; margin-bottom: 16px;">hourglass_empty</mat-icon>
-                <h3 style="margin: 0; color: #aaa; font-weight: normal; font-size: 16px;">Esperando respuesta</h3>
-                <p style="margin: 8px 0 0; color: #777; font-size: 14px;">Haz clic en Analizar video para obtener la
-                  calificación ABCD.</p>
-              </div>
+              style="flex: 1; max-height: 80vh; overflow-y: auto; padding: 16px; border-radius: 8px; background-color: #fcfcfc; border: 1px solid #e0e0e0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 
               <!-- ABCD Evaluation Table Redesigned -->
               <div *ngIf="variants && variants.length > 0"

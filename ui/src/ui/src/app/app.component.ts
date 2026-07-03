@@ -214,7 +214,7 @@ export class AppComponent {
   geoChartInstance: echarts.ECharts | undefined;
   categoryChartInstance: echarts.ECharts | undefined;
   loading = false;
-  
+
   aiSummaryJson = '';
   activeGeoView: 'map' | 'ai' | 'micro' = 'map';
   microOpportunitiesJson = '';
@@ -346,9 +346,9 @@ export class AppComponent {
             if (key) {
               const existing = h3Map.get(key);
               if (existing) {
-                 existing.adultos += adultos;
+                existing.adultos += adultos;
               } else {
-                 h3Map.set(key, { adultos, estado, municipio });
+                h3Map.set(key, { adultos, estado, municipio });
               }
             }
 
@@ -366,21 +366,21 @@ export class AppComponent {
           // Obtener bordes para todas las agrupaciones
           const demoResults: any[] = [];
           for (const [key, value] of h3Map.entries()) {
-              let boundaries: number[][] = [];
-              try {
-                // cellToBoundary devuelve un array de [lat, lng]
-                boundaries = h3.cellToBoundary(key);
-              } catch (e) {
-                console.warn("H3 inválido:", key);
-              }
+            let boundaries: number[][] = [];
+            try {
+              // cellToBoundary devuelve un array de [lat, lng]
+              boundaries = h3.cellToBoundary(key);
+            } catch (e) {
+              console.warn("H3 inválido:", key);
+            }
 
-              demoResults.push({
-                h3_id: key,
-                total_adults: value.adultos,
-                estado: value.estado,
-                municipio: value.municipio,
-                boundaries_demo: boundaries
-              });
+            demoResults.push({
+              h3_id: key,
+              total_adults: value.adultos,
+              estado: value.estado,
+              municipio: value.municipio,
+              boundaries_demo: boundaries
+            });
           }
 
           // Mostrar resultado en la pantalla (todas las agrupaciones como pediste)
@@ -390,7 +390,7 @@ export class AppComponent {
             hexagonos_h3_unicos: h3Map.size,
             muestra_de_datos_agrupados: demoResults // Muestra todas
           }, null, 2);
-          
+
           // Generar el paquete para la Inteligencia Artificial (Top 100 Zonas)
           const aiArray = Array.from(aiMap.values());
           aiArray.sort((a, b) => b.adultos - a.adultos); // Ordenar de mayor a menor demanda
@@ -404,7 +404,7 @@ export class AppComponent {
           // Generar el paquete para Micro Oportunidades (Agrupación por cercanía)
           const h3Array = Array.from(h3Map.entries()).map(([id, val]) => ({ id, adultos: val.adultos, estado: val.estado, municipio: val.municipio }));
           h3Array.sort((a, b) => b.adultos - a.adultos);
-          
+
           const clusters: any[] = [];
           for (const hex of h3Array) {
             let added = false;
@@ -416,7 +416,7 @@ export class AppComponent {
               } catch (e) {
                 // Si la función falla (ej. hexágonos en diferentes caras del icosaedro o muy lejanos), la distancia se queda en Infinity
               }
-              if (distance <= 2) { 
+              if (distance <= 2) {
                 cluster.adultos_totales += hex.adultos;
                 cluster.hexagons.push(hex.id);
                 added = true;
@@ -467,9 +467,9 @@ export class AppComponent {
             municipio: d.municipio,
             boundaries: d.boundaries_demo
           }));
-          
+
           this.cdRef.detectChanges();
-          
+
           // Redibujar el mapa si estamos en la pestaña Geo
           if (this.activeDashboardTab === 'geo') {
             setTimeout(() => this.initGeoMap(), 100);
@@ -609,7 +609,7 @@ export class AppComponent {
   // YouTube Content Ideas Generator State
   youtubeCustomPoints = '';
   youtubePersonalizationMode: 'category' | 'geokey' | null = null;
-  
+
   // Script loading flag
   mapScriptsLoaded = false;
   youtubeSelectedValue = '';
@@ -621,12 +621,12 @@ export class AppComponent {
   isGeneratingYoutubeIdeas = false;
 
   readonly youtubeCategories = [
-    'Cine/Animación', 'Autos/Vehículos', 'Música', 'Mascotas/Animales', 
-    'Deportes', 'Cortometrajes', 'Viajes/Eventos', 'Videojuegos', 'Videoblogs', 
-    'Personas/Blogs', 'Comedia', 'Entretenimiento', 'Noticias/Política', 
-    'Tutoriales/Estilo', 'Educación', 'Ciencia/Tecnología', 'Películas', 
-    'Anime/Animación', 'Acción/Aventura', 'Clásicos', 'Documentales', 'Drama', 
-    'Familia', 'Extranjero', 'Terror', 'Ciencia Ficción/Fantasía', 'Suspenso', 
+    'Cine/Animación', 'Autos/Vehículos', 'Música', 'Mascotas/Animales',
+    'Deportes', 'Cortometrajes', 'Viajes/Eventos', 'Videojuegos', 'Videoblogs',
+    'Personas/Blogs', 'Comedia', 'Entretenimiento', 'Noticias/Política',
+    'Tutoriales/Estilo', 'Educación', 'Ciencia/Tecnología', 'Películas',
+    'Anime/Animación', 'Acción/Aventura', 'Clásicos', 'Documentales', 'Drama',
+    'Familia', 'Extranjero', 'Terror', 'Ciencia Ficción/Fantasía', 'Suspenso',
     'Cortos', 'Programas', 'Tráilers'
   ];
 
@@ -743,9 +743,9 @@ export class AppComponent {
       await this.loadScript('https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js');
       await this.loadScript('https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js');
       await this.loadScript('https://unpkg.com/deck.gl@9.3.5/dist.min.js');
-      
+
       this.mapScriptsLoaded = true;
-      
+
       // If map is already open, init it now
       if (this.youtubePersonalizationMode === 'geokey') {
         this.initGeoMap();
@@ -1299,6 +1299,9 @@ export class AppComponent {
 
   loadPreviousRun(folder: string) {
     this.loading = true;
+    this.selectedFileDurationStr = 'Procesando...';
+    this.selectedFileResolutionStr = 'Procesando...';
+    this.startAnalysisSimulation();
     const response = this.apiCallsService.loadPreviousRun(folder);
     this.processVideo(response[0], response[1]);
   }
@@ -1463,7 +1466,7 @@ export class AppComponent {
         getFillColor: (d: any) => {
           const ratio = d.value / maxValue;
           // Un color más parecido a tu referencia (tonos crema/dorado claro) con algo de calor
-          return [216 + (ratio * 39), 211 - (ratio * 50), 193 - (ratio * 100), 255]; 
+          return [216 + (ratio * 39), 211 - (ratio * 50), 193 - (ratio * 100), 255];
         },
         onHover: (info: any) => {
           const tooltip = document.getElementById('deck-tooltip');
@@ -1499,6 +1502,10 @@ export class AppComponent {
   }
 
   confirmAnalysis() {
+    // Mapear el 'label' seleccionado en el formulario al 'value' requerido por el pipeline interno
+    const matchedObjective = this.fullVideoObjectives.find(o => o.label === this.campaignObjective);
+    this.selectedFullVideoObjective = matchedObjective ? matchedObjective.value : 'general';
+
     this.showAnalysisModal = false;
     if (this.selectedHistoryRun) {
       this.loadPreviousRun(this.selectedHistoryRun);
@@ -1632,15 +1639,17 @@ export class AppComponent {
     this.videoHeight = CONFIG.defaultVideoHeight;
     const segmentsListElement = document.querySelector(
       'segments-list'
-    )! as HTMLElement;
-    segmentsListElement.style.setProperty(
-      '--filmstrip-image-width',
-      `${CONFIG.defaultVideoWidth / 5}px`
-    );
-    segmentsListElement.style.setProperty(
-      '--filmstrip-image-height',
-      `${CONFIG.defaultVideoHeight / 5}px`
-    );
+    ) as HTMLElement | null;
+    if (segmentsListElement) {
+      segmentsListElement.style.setProperty(
+        '--filmstrip-image-width',
+        `${CONFIG.defaultVideoWidth / 5}px`
+      );
+      segmentsListElement.style.setProperty(
+        '--filmstrip-image-height',
+        `${CONFIG.defaultVideoHeight / 5}px`
+      );
+    }
   }
 
   processVideo(
@@ -1661,8 +1670,15 @@ export class AppComponent {
     );
     this.videoPath = videoFilePath;
     this.getGcsFolderPath();
-    this.previewVideoElem.nativeElement.src = this.videoPath;
     this.previewVideoElem.nativeElement.onloadeddata = () => {
+      // Si fue desde el historial, rellenar los strings
+      if (this.selectedHistoryRun && this.selectedFileDurationStr === 'Procesando...') {
+        this.selectedFileResolutionStr = `${this.previewVideoElem.nativeElement.videoWidth} x ${this.previewVideoElem.nativeElement.videoHeight}`;
+        const durationSec = this.previewVideoElem.nativeElement.duration;
+        const mins = Math.floor(durationSec / 60);
+        const secs = Math.floor(durationSec % 60);
+        this.selectedFileDurationStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
       this.resetVideoCanvas();
       this.nonLandscapeInputVideo =
         this.previewVideoElem.nativeElement.videoWidth <=
@@ -1725,7 +1741,13 @@ export class AppComponent {
         CONFIG.maxRetries
       );
       this.previewVideoElem.nativeElement.onloadeddata = null;
+      
+      // AUTO-INICIAR LA SECUENCIA SI ESTAMOS EN MODO COMPASS
+      if (this.isAnalysisInProgress) {
+        this.analyzeFullVideo();
+      }
     };
+    this.previewVideoElem.nativeElement.src = this.videoPath;
     this.previewVideoElem.nativeElement.onplaying = () => {
       this.frameInterval = window.setInterval(() => {
         this.drawFrame(this.activeVideoObjects);
@@ -1857,7 +1879,7 @@ export class AppComponent {
     console.log('Compass: analyzeFullVideo() — orchestrated pipeline starting');
     this.loading = true;
     this.generatingVariants = true;
-    this.startAnalysisSimulation();
+    // NO llamar startAnalysisSimulation() aquí — ya fue llamado antes en uploadVideo/loadPreviousRun
 
     // ── PASO 1: Video ya cargado (estado ya activo, step = 1) ────────────────
     // El modal ya muestra el paso 1 como en progreso. Avanzamos inmediatamente.
@@ -1897,8 +1919,8 @@ export class AppComponent {
         prioridades: null,
       };
 
-      // Simulamos una pequeña pausa visual para el paso 2
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Simulamos una pequeña pausa visual para el paso 2 (agregado +5 segundos)
+      await new Promise(resolve => setTimeout(resolve, 5800));
 
       // ── PASO 3 (REAL): Analizando señales creativas (ABCD) ─────────────────
       this.advanceStep(3);
@@ -2048,8 +2070,9 @@ export class AppComponent {
       this.advanceStep(7);
       this.compassJson = JSON.stringify(this.compassData, null, 2);
 
-      // Breve pausa visual antes de habilitar el botón final
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      // Breve pausa visual antes de habilitar el botón final (agregado +5 segundos)
+      await new Promise(resolve => setTimeout(resolve, 6200));
+      this.advanceStep(8);
       this.isAnalysisComplete = true;
       this.cdRef.detectChanges();
 

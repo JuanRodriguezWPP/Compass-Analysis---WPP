@@ -446,4 +446,14 @@ export interface ApiCalls {
     microJson?: string
   ): Observable<string>;
   sendInsightsReport(payload: object): Observable<string>;
+  generateGeoIntelligence(
+    compassContextJson: string,
+    macroJson: string,
+    microJson: string
+  ): Observable<string>;
+  generateChannelIntelligence(
+    compassContextJson: string,
+    categories: string[]
+  ): Observable<string>;
+  generatePrioritization(compassContextJson: string): Observable<string>;
 }

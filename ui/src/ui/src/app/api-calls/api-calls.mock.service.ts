@@ -415,6 +415,63 @@ export class ApiCallsService implements ApiCalls {
       }, 1500);
     });
   }
+
+  generateGeoIntelligence(
+    compassContextJson: string,
+    macroJson: string,
+    microJson: string
+  ): Observable<string> {
+    return new Observable<string>(subscriber => {
+      setTimeout(() => {
+        subscriber.next(JSON.stringify({
+          zonas: [{ 
+            zona: "Mock Zone", 
+            audiencia: 100000, 
+            coordenada_central: "19.4326,-99.1332", 
+            estrategia: "Target general", 
+            prioridad: 1 
+          }]
+        }));
+        subscriber.complete();
+      }, 1000);
+    });
+  }
+
+  generateChannelIntelligence(
+    compassContextJson: string,
+    categories: string[]
+  ): Observable<string> {
+    return new Observable<string>(subscriber => {
+      setTimeout(() => {
+        subscriber.next(JSON.stringify([{
+          categoria: categories[0] || "Mock Category",
+          afinidad: "Alta",
+          insights: ["Insight 1"],
+          evidencias: ["Evidencia 1"],
+          recomendaciones: ["Recomendación 1"]
+        }]));
+        subscriber.complete();
+      }, 1000);
+    });
+  }
+
+  generatePrioritization(compassContextJson: string): Observable<string> {
+    return new Observable<string>(subscriber => {
+      setTimeout(() => {
+        subscriber.next(JSON.stringify({
+          pregunta: "¿Qué debería hacer ahora?",
+          oportunidades: [{
+            titulo: "Optimizar creatividades",
+            evidencia: "Score bajo",
+            impacto: "Alto",
+            prioridad: 1,
+            recomendacion: "Ajustar cortes"
+          }]
+        }));
+        subscriber.complete();
+      }, 1000);
+    });
+  }
 }
 
 
