@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compass Client Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        :root {
+            --navy: #0f1923;
+            --navy2: #1a2535;
+            --navy3: #243046;
+            --white: #fff;
+            --g50: #f9fafb;
+            --g100: #f3f4f6;
+            --g200: #e5e7eb;
+            --g300: #d1d5db;
+            --g400: #9ca3af;
+            --g500: #6b7280;
+            --g600: #4b5563;
+            --g700: #374151;
+            --g900: #111827;
+            --green: #aef366;
+            --green2: #22c55e;
+            --green3: #166534;
+            --green4: #dcfce7;
+            --greendim: rgba(174, 243, 102, .12);
+            --greenglow: rgba(174, 243, 102, .3);
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --orange: #f97316;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --rsm: 6px;
+            --rmd: 10px;
+            --rlg: 16px;
+            --rxl: 24px;
+            --s1: 0 1px 3px rgba(0, 0, 0, .07), 0 1px 2px rgba(0, 0, 0, .04);
+            --s2: 0 4px 16px rgba(0, 0, 0, .08), 0 2px 4px rgba(0, 0, 0, .04);
+            --s3: 0 10px 40px rgba(0, 0, 0, .12);
+            --t: all .22s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        /* ── SHELL ── */
+        .shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            flex-shrink: 0;
+            height: 60px;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 20px;
+        }
+
+        .tb-logo {
+            width: 34px;
+            height: 34px;
+            background: var(--green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tb-logo svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .tb-brand strong {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .tb-brand span {
+            display: block;
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--green);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .tb-sep {
+            width: 1px;
+            height: 28px;
+            background: rgba(255, 255, 255, .1);
+            flex-shrink: 0;
+        }
+
+        .tb-client strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+        }
+
+        .tb-client span {
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 255, 255, .45);
+        }
+
+        .tb-arrow {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tb-arrow svg {
+            width: 60px;
+            opacity: .25;
+        }
+
+        .tb-meta {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .tb-meta span {
+            display: block;
+            font-size: 10px;
+            color: rgba(255, 255, 255, .4);
+        }
+
+        .tb-meta strong {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .6);
+        }
+
+        .tb-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--green);
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 9px 18px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+            letter-spacing: .2px;
+            transition: var(--t);
+        }
+
+        .tb-btn:hover {
+            background: #c4f77e;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--greenglow);
+        }
+
+        .tb-btn .material-icons {
+            font-size: 15px;
+        }
+
+        /* ── TABS ── */
+        .tabs {
+            flex-shrink: 0;
+            height: 48px;
+            background: #fff;
+            border-bottom: 1px solid var(--g200);
+            display: flex;
+            align-items: stretch;
+            padding: 0 24px;
+            gap: 2px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0 16px;
+            font-size: 12.5px;
+            font-weight: 500;
+            color: var(--g500);
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: var(--t);
+        }
+
+        .tab .material-icons {
+            font-size: 14px;
+        }
+
+        .tab:hover {
+            color: var(--g700);
+        }
+
+        .tab.active {
+            color: var(--navy);
+            border-bottom-color: var(--green);
+            font-weight: 700;
+        }
+
+        /* ── PAGES ── */
+        .pages {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            height: 100%;
+            overflow-y: auto;
+            background: var(--g100);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .page::-webkit-scrollbar-thumb {
+            background: var(--g200);
+            border-radius: 3px;
+        }
+
+        /* ── INNER WRAP for non-hero pages ── */
+        .wrap {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 28px 32px 64px;
+        }
+
+        /* ── PAGE HEADER ── */
+        .ph {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .ph-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--rsm);
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ph-icon .material-icons {
+            font-size: 19px;
+            color: var(--green);
+        }
+
+        .ph h2 {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--g900);
+        }
+
+        .ph p {
+            font-size: 12.5px;
+            color: var(--g500);
+            margin-top: 1px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            padding: 22px;
+            box-shadow: var(--s1);
+        }
+
+        /* ── BADGE ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .bg-green {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .bg-amber {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .bg-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .bg-orange {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+
+        .bg-navy {
+            background: rgba(15, 25, 35, .08);
+            color: var(--navy);
+        }
+
+        .bg-purple {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 1 — HERO STYLES                       */
+        /* ════════════════════════════════════════════ */
+
+        /* Hero dark block */
+        .rp-hero {
+            background: var(--navy);
+            border-radius: var(--rlg);
+            margin: 16px 20px 0;
+            overflow: hidden;
+            box-shadow: var(--s3);
+        }
+
+        .rp-hero-inner {
+            display: grid;
+            grid-template-columns: 2fr 1.6fr 1.1fr;
+            min-height: 280px;
+        }
+
+        /* video col */
+        .rp-video {
+            position: relative;
+            background: #0a0f18;
+            overflow: hidden;
+            border-radius: var(--rlg) 0 0 var(--rlg);
+        }
+
+        .rp-video-ph {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 10px;
+            min-height: 240px;
+        }
+
+        .rp-video-ph .material-icons {
+            font-size: 52px;
+            color: rgba(255, 255, 255, .15);
+        }
+
+        .rp-video-ph span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .25);
+        }
+
+        .rp-video img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+        .rp-video-badge {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            background: rgba(0, 0, 0, .6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, .1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .75);
+        }
+
+        /* score col */
+        .rp-score {
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .rp-score-hdr {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .5);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .rp-score-hdr .material-icons {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .3);
+        }
+
+        .rp-score-big {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            line-height: 1;
+        }
+
+        .rp-score-num {
+            font-size: 80px;
+            font-weight: 900;
+            color: var(--green);
+            letter-spacing: -4px;
+        }
+
+        .rp-score-den {
+            font-size: 28px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, .3);
+            padding-bottom: 8px;
+        }
+
+        .rp-score-lbl {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--green);
+            margin: 6px 0 2px;
+        }
+
+        .rp-score-method {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .35);
+            margin-bottom: 20px;
+        }
+
+        /* ABCD mini row */
+        .rp-abcd-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .rp-abcd-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .rp-abcd-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .4);
+            letter-spacing: .2px;
+        }
+
+        .rp-abcd-val {
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .rp-abcd-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .rp-abcd-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--green);
+            transition: width 1.4s ease;
+        }
+
+        /* stats col */
+        .rp-stats {
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .rp-stat {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .rp-stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(174, 243, 102, .15);
+            border: 1px solid rgba(174, 243, 102, .25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .rp-stat-icon .material-icons {
+            font-size: 16px;
+            color: var(--green);
+        }
+
+        .rp-stat-num {
+            font-size: 22px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .rp-stat-lbl {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .7);
+            margin-top: 1px;
+            line-height: 1.2;
+        }
+
+        .rp-stat-sub {
+            font-size: 10px;
+            color: rgba(255, 255, 255, .35);
+            margin-top: 1px;
+        }
+
+        /* Exec summary row */
+        .rp-exec {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0;
+            margin: 12px 20px 12px;
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            box-shadow: var(--s1);
+            overflow: hidden;
+        }
+
+        .rp-exec-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px 22px;
+            border-right: 1px solid var(--g100);
+        }
+
+        .rp-exec-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--g100);
+            border: 1px solid var(--g200);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .rp-exec-icon .material-icons {
+            font-size: 18px;
+            color: var(--g600);
+        }
+
+        .rp-exec-left h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--g900);
+            margin-bottom: 6px;
+        }
+
+        .rp-exec-left p {
+            font-size: 12.5px;
+            color: var(--g600);
+            line-height: 1.65;
+        }
+
+        .rp-exec-col {
+            padding: 20px 22px;
+            border-right: 1px solid var(--g100);
+        }
+
+        .rp-exec-col:last-child {
+            border-right: none;
+        }
+
+        .rp-exec-col-ttl {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .rp-exec-col-ttl.green {
+            color: #15803d;
+        }
+
+        .rp-exec-col-ttl.orange {
+            color: #c2410c;
+        }
+
+        .rp-exec-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--g100);
+            font-size: 12.5px;
+            color: var(--g600);
+            line-height: 1.5;
+        }
+
+        .rp-exec-item:last-child {
+            border-bottom: none;
+        }
+
+        .rp-exec-item .material-icons {
+            font-size: 14px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .rp-exec-item.str .material-icons {
+            color: #22c55e;
+        }
+
+        .rp-exec-item.opp .material-icons {
+            color: var(--orange);
+        }
+
+        /* Section preview strip */
+        .rp-strip {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0;
+            margin: 0 20px 16px;
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            box-shadow: var(--s1);
+            overflow: hidden;
+        }
+
+        .rp-strip-cell {
+            padding: 16px;
+            border-right: 1px solid var(--g100);
+            cursor: pointer;
+            transition: var(--t);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .rp-strip-cell:last-child {
+            border-right: none;
+        }
+
+        .rp-strip-cell:hover {
+            background: var(--g50);
+        }
+
+        .rp-strip-hdr {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .rp-strip-ico {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .rp-strip-ico .material-icons {
+            font-size: 15px;
+        }
+
+        .rp-strip-ttl {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--g900);
+            line-height: 1.2;
+        }
+
+        .rp-strip-sub {
+            font-size: 10.5px;
+            color: var(--g500);
+            line-height: 1.4;
+            margin-top: 2px;
+        }
+
+        .rp-strip-content {
+            flex: 1;
+        }
+
+        /* strip: thumbnails */
+        .rp-strip-thumbs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .rp-strip-thumb {
+            flex: 1;
+            aspect-ratio: 16/9;
+            background: var(--g100);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .rp-strip-thumb .material-icons {
+            font-size: 18px;
+            color: var(--g300);
+        }
+
+        .rp-strip-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* strip: map */
+        .rp-strip-map {
+            height: 70px;
+            background: #e8f4fd;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rp-strip-map .material-icons {
+            font-size: 28px;
+            color: #93c5fd;
+        }
+
+        .rp-strip-map span {
+            font-size: 10px;
+            color: var(--g500);
+        }
+
+        /* strip: bars */
+        .rp-strip-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rp-strip-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rp-strip-bar-name {
+            font-size: 10px;
+            color: var(--g600);
+            width: 60px;
+            flex-shrink: 0;
+        }
+
+        .rp-strip-bar-track {
+            flex: 1;
+            height: 5px;
+            background: var(--g100);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .rp-strip-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--green2);
+            transition: width 1.2s ease;
+        }
+
+        .rp-strip-bar-val {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--g700);
+            width: 24px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* strip: op chips */
+        .rp-strip-chips {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rp-op-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .rp-op-chip .material-icons {
+            font-size: 14px;
+        }
+
+        .rp-op-chip.alta {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .rp-op-chip.media {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .rp-op-chip.baja {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        /* strip: radar */
+        .rp-strip-radar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 70px;
+        }
+
+        .rp-radar-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* strip: checklist */
+        .rp-strip-checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .rp-strip-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+            font-size: 10.5px;
+            color: var(--g600);
+            line-height: 1.4;
+        }
+
+        .rp-strip-check .material-icons {
+            font-size: 12px;
+            color: var(--green2);
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        /* strip: link */
+        .rp-strip-link {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-top: auto;
+        }
+
+        .rp-strip-link .material-icons {
+            font-size: 13px;
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 2 — CREATIVE HIGHLIGHTS               */
+        /* ════════════════════════════════════════════ */
+        .cr-hl-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .cr-hl-card {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            overflow: hidden;
+            box-shadow: var(--s1);
+            transition: var(--t);
+        }
+
+        .cr-hl-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--s2);
+        }
+
+        .cr-hl-thumb {
+            aspect-ratio: 16/9;
+            background: var(--navy2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .cr-hl-thumb .material-icons {
+            font-size: 44px;
+            color: rgba(255, 255, 255, .12);
+        }
+
+        .cr-hl-type {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--green);
+            color: var(--navy);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .cr-hl-body {
+            padding: 18px;
+        }
+
+        .cr-hl-body h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--g900);
+            margin-bottom: 7px;
+            line-height: 1.4;
+        }
+
+        .cr-hl-finding {
+            font-size: 12.5px;
+            color: var(--g600);
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .cr-hl-rec {
+            display: flex;
+            align-items: flex-start;
+            gap: 7px;
+            background: var(--g50);
+            border: 1px solid var(--g200);
+            border-radius: var(--rsm);
+            padding: 9px 11px;
+        }
+
+        .cr-hl-rec .material-icons {
+            font-size: 13px;
+            color: var(--navy);
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .cr-hl-rec span {
+            font-size: 12px;
+            color: var(--g600);
+            line-height: 1.5;
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 3 — GEO                               */
+        /* ════════════════════════════════════════════ */
+        .geo-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+        }
+
+        .geo-map-card {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            overflow: hidden;
+            box-shadow: var(--s1);
+        }
+
+        .geo-map-hdr {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--g100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .geo-map-hdr h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--g900);
+        }
+
+        .geo-map-hdr span {
+            font-size: 12px;
+            color: var(--g500);
+        }
+
+        .geo-map-body {
+            height: 360px;
+            min-height: 300px;
+            background: #e8f4fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .geo-map-body .material-icons {
+            font-size: 64px;
+            color: #93c5fd;
+        }
+
+        .geo-map-body span {
+            font-size: 13px;
+            color: var(--g500);
+        }
+
+        .geo-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .geo-region {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-left: 3px solid transparent;
+            border-radius: var(--rmd);
+            padding: 14px;
+            cursor: pointer;
+            transition: var(--t);
+            box-shadow: var(--s1);
+        }
+
+        .geo-region:hover,
+        .geo-region.active {
+            border-left-color: var(--navy);
+        }
+
+        .geo-region-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .geo-region-top h4 {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--g900);
+        }
+
+        .geo-region-desc {
+            font-size: 11.5px;
+            color: var(--g500);
+            line-height: 1.5;
+        }
+
+        .geo-region-aud {
+            font-size: 11px;
+            color: var(--g400);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .geo-region-aud .material-icons {
+            font-size: 12px;
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 4 — CATEGORY                          */
+        /* ════════════════════════════════════════════ */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .cat-card {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            padding: 20px;
+            box-shadow: var(--s1);
+            transition: var(--t);
+        }
+
+        .cat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--s2);
+        }
+
+        .cat-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .cat-card-top h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--g900);
+        }
+
+        .cat-bar-wrap {
+            margin-bottom: 12px;
+        }
+
+        .cat-bar-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--g500);
+            margin-bottom: 5px;
+        }
+
+        .cat-bar-track {
+            height: 6px;
+            background: var(--g100);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .cat-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1.4s ease;
+        }
+
+        .cat-bar-fill.alta {
+            background: #22c55e;
+        }
+
+        .cat-bar-fill.media {
+            background: var(--amber);
+        }
+
+        .cat-bar-fill.baja {
+            background: var(--orange);
+        }
+
+        .cat-finding {
+            font-size: 12.5px;
+            color: var(--g600);
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .cat-recs {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .cat-rec {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--g600);
+            line-height: 1.5;
+        }
+
+        .cat-rec .material-icons {
+            font-size: 13px;
+            color: var(--navy);
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 5 — OPORTUNIDADES                     */
+        /* ════════════════════════════════════════════ */
+        .op-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .op-card {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-left: 4px solid transparent;
+            border-radius: var(--rlg);
+            padding: 22px 26px;
+            display: grid;
+            grid-template-columns: 64px 1fr auto;
+            gap: 20px;
+            align-items: start;
+            box-shadow: var(--s1);
+            transition: var(--t);
+        }
+
+        .op-card:hover {
+            box-shadow: var(--s2);
+            transform: translateX(2px);
+        }
+
+        .op-card.alto {
+            border-left-color: #22c55e;
+        }
+
+        .op-card.medio {
+            border-left-color: var(--amber);
+        }
+
+        .op-card.bajo {
+            border-left-color: var(--blue);
+        }
+
+        .op-num-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            padding-top: 3px;
+        }
+
+        .op-num {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--g200);
+            line-height: 1;
+        }
+
+        .op-body h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--g900);
+            margin-bottom: 7px;
+            line-height: 1.3;
+        }
+
+        .op-evidence {
+            font-size: 13px;
+            color: var(--g600);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .op-rec {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            background: var(--g50);
+            border: 1px solid var(--g200);
+            border-radius: var(--rsm);
+            padding: 11px 13px;
+        }
+
+        .op-rec .material-icons {
+            font-size: 15px;
+            color: var(--navy);
+            flex-shrink: 0;
+        }
+
+        .op-rec span {
+            font-size: 12.5px;
+            color: var(--g700);
+            line-height: 1.5;
+        }
+
+        .op-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .op-meta-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .op-meta-chip .lbl {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--g400);
+        }
+
+        .op-meta-chip .val {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--g700);
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 6 — ABCD                              */
+        /* ════════════════════════════════════════════ */
+        .abcd-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .abcd-card {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rlg);
+            padding: 26px 22px;
+            box-shadow: var(--s1);
+            transition: var(--t);
+        }
+
+        .abcd-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--s2);
+        }
+
+        .abcd-bg-letter {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: -10px;
+        }
+
+        .abcd-card.A .abcd-bg-letter {
+            color: rgba(59, 130, 246, .07);
+        }
+
+        .abcd-card.B .abcd-bg-letter {
+            color: rgba(139, 92, 246, .07);
+        }
+
+        .abcd-card.C .abcd-bg-letter {
+            color: rgba(249, 115, 22, .07);
+        }
+
+        .abcd-card.D .abcd-bg-letter {
+            color: rgba(245, 158, 11, .07);
+        }
+
+        .abcd-card-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .abcd-card.A .abcd-card-icon {
+            background: rgba(59, 130, 246, .1);
+        }
+
+        .abcd-card.B .abcd-card-icon {
+            background: rgba(139, 92, 246, .1);
+        }
+
+        .abcd-card.C .abcd-card-icon {
+            background: rgba(249, 115, 22, .1);
+        }
+
+        .abcd-card.D .abcd-card-icon {
+            background: rgba(245, 158, 11, .1);
+        }
+
+        .abcd-card.A .abcd-card-icon .material-icons {
+            color: #3b82f6;
+        }
+
+        .abcd-card.B .abcd-card-icon .material-icons {
+            color: #8b5cf6;
+        }
+
+        .abcd-card.C .abcd-card-icon .material-icons {
+            color: #f97316;
+        }
+
+        .abcd-card.D .abcd-card-icon .material-icons {
+            color: #f59e0b;
+        }
+
+        .abcd-card-icon .material-icons {
+            font-size: 22px;
+        }
+
+        .abcd-card h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--g900);
+            margin-bottom: 8px;
+        }
+
+        .abcd-card p {
+            font-size: 12.5px;
+            color: var(--g600);
+            line-height: 1.65;
+        }
+
+        .abcd-card-score {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--g100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .abcd-card-score .lbl {
+            font-size: 11px;
+            color: var(--g400);
+        }
+
+        .abcd-card-score .val {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--g900);
+        }
+
+        /* ════════════════════════════════════════════ */
+        /*  PAGE 7 — PRÓXIMOS PASOS                    */
+        /* ════════════════════════════════════════════ */
+        .steps-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .steps-intro {
+            background: var(--navy);
+            border-radius: var(--rlg);
+            padding: 32px 28px;
+            color: #fff;
+        }
+
+        .steps-intro h2 {
+            font-size: 26px;
+            font-weight: 900;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            letter-spacing: -.5px;
+        }
+
+        .steps-intro h2 em {
+            color: var(--green);
+            font-style: normal;
+        }
+
+        .steps-intro p {
+            font-size: 13.5px;
+            color: rgba(255, 255, 255, .55);
+            line-height: 1.7;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cr-step {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: var(--rmd);
+            padding: 18px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            box-shadow: var(--s1);
+            transition: var(--t);
+        }
+
+        .cr-step:hover {
+            border-color: var(--navy);
+            box-shadow: var(--s2);
+            transform: translateX(4px);
+        }
+
+        .step-num {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 900;
+            color: var(--green);
+            flex-shrink: 0;
+        }
+
+        .step-body h4 {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--g900);
+            margin-bottom: 4px;
+        }
+
+        .step-body p {
+            font-size: 12.5px;
+            color: var(--g600);
+            line-height: 1.55;
+        }
+
+        /* ── BOTTOM BAR ── */
+        .bottombar {
+            flex-shrink: 0;
+            height: 38px;
+            background: #fff;
+            border-top: 1px solid var(--g200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .bb-left {
+            font-size: 11px;
+            color: var(--g500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bb-left strong {
+            color: var(--g700);
+            font-weight: 600;
+        }
+
+        .bb-sep {
+            width: 1px;
+            height: 12px;
+            background: var(--g200);
+        }
+
+        .bb-right {
+            font-size: 11px;
+            color: var(--g400);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .bb-right a {
+            color: var(--navy);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .bb-right a .material-icons {
+            font-size: 12px;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            text-align: center;
+            color: var(--g400);
+            background: #fff;
+            border: 1px dashed var(--g200);
+            border-radius: var(--rlg);
+        }
+
+        .empty .material-icons {
+            font-size: 44px;
+            margin-bottom: 10px;
+            opacity: .35;
+        }
+
+        .empty span {
+            font-size: 13.5px;
+        }
+
+        /* ── MODAL ── */
+        .modal-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-bg.open {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: var(--rxl);
+            padding: 32px;
+            width: 580px;
+            max-width: 90vw;
+            box-shadow: var(--s3);
+        }
+
+        .modal h2 {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--g900);
+            margin-bottom: 5px;
+        }
+
+        .modal p {
+            font-size: 13px;
+            color: var(--g500);
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .modal textarea {
+            width: 100%;
+            height: 170px;
+            background: var(--g50);
+            border: 1px solid var(--g200);
+            border-radius: var(--rmd);
+            padding: 12px 14px;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--g700);
+            resize: vertical;
+            outline: none;
+            transition: var(--t);
+        }
+
+        .modal textarea:focus {
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(15, 25, 35, .07);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: var(--t);
+        }
+
+        .btn-navy {
+            background: var(--navy);
+            color: #fff;
+        }
+
+        .btn-navy:hover {
+            background: var(--navy2);
+        }
+
+        .btn-ghost {
+            background: var(--g100);
+            color: var(--g700);
+        }
+
+        .btn-ghost:hover {
+            background: var(--g200);
+        }
+
+        .modal-err {
+            display: none;
+            margin-top: 8px;
+            padding: 9px 12px;
+            background: #fee2e2;
+            border: 1px solid rgba(239, 68, 68, .2);
+            border-radius: var(--rsm);
+            font-size: 12px;
+            color: var(--red);
+        }
+
+        /* ── FAB ── */
+        .fab {
+            position: fixed;
+            bottom: 50px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fab-hint {
+            background: #fff;
+            border: 1px solid var(--g200);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 11.5px;
+            color: var(--g600);
+            max-width: 190px;
+            line-height: 1.4;
+            box-shadow: var(--s1);
+        }
+
+        .fab-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--t);
+            box-shadow: var(--s2);
+        }
+
+        .fab-btn:hover {
+            background: var(--navy2);
+            transform: scale(1.06);
+        }
+
+        .fab-btn .material-icons {
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="tb-logo">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3L5 7.5V16.5L12 21L19 16.5V7.5L12 3Z" stroke="#0f1923" stroke-width="2" />
+                    <circle cx="12" cy="12" r="2.5" fill="#0f1923" />
+                </svg>
+            </div>
+            <div class="tb-brand">
+                <strong>COMPASS</strong>
+                <span>Client Report</span>
+            </div>
+            <div class="tb-sep"></div>
+            <div class="tb-client">
+                <strong id="tb-brand">—</strong>
+                <span id="tb-campaign">—</span>
+            </div>
+            <div class="tb-arrow">
+                <svg viewBox="0 0 80 30" fill="none">
+                    <path d="M0 15 L60 15 L50 5 M60 15 L50 25" stroke="#aef366" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+            <div class="tb-meta">
+                <span>Reporte generado el</span>
+                <strong id="tb-date">—</strong>
+            </div>
+            <button class="tb-btn" onclick="window.print()">
+                <span class="material-icons">download</span>Descargar PDF
+            </button>
+        </header>
+
+        <!-- TABS -->
+        <nav class="tabs">
+            <button class="tab active" data-page="page-hero" onclick="switchPage(this)"><span
+                    class="material-icons">bar_chart</span>Resumen Ejecutivo</button>
+            <button class="tab" data-page="page-hl" onclick="switchPage(this)"><span
+                    class="material-icons">movie</span>Creative Highlights</button>
+            <button class="tab" data-page="page-geo" onclick="switchPage(this)"><span
+                    class="material-icons">public</span>Geo Intelligence</button>
+            <button class="tab" data-page="page-cat" onclick="switchPage(this)"><span
+                    class="material-icons">category</span>Category Intelligence</button>
+            <button class="tab" data-page="page-ops" onclick="switchPage(this)"><span
+                    class="material-icons">lightbulb</span>Oportunidades</button>
+            <button class="tab" data-page="page-abcd" onclick="switchPage(this)"><span
+                    class="material-icons">shield</span>Metodología ABCD</button>
+            <button class="tab" data-page="page-steps" onclick="switchPage(this)"><span
+                    class="material-icons">check_circle</span>Próximos pasos</button>
+        </nav>
+
+        <!-- PAGES -->
+        <div class="pages">
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 1 — RESUMEN EJECUTIVO (HERO)    -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page active" id="page-hero">
+
+                <!-- Dark Hero Block -->
+                <div class="rp-hero">
+                    <div class="rp-hero-inner">
+
+                        <!-- Col 1: Video -->
+                        <div class="rp-video">
+                            <div class="rp-video-ph" id="hero-ph">
+                                <span class="material-icons">play_circle_outline</span>
+                                <span>Vista previa del video</span>
+                            </div>
+                            <div class="rp-video-badge" id="hero-dur">00:00</div>
+                        </div>
+
+                        <!-- Col 2: ABCD Score -->
+                        <div class="rp-score">
+                            <div class="rp-score-hdr">
+                                Creative Assessment (ABCD)
+                                <span class="material-icons">info_outline</span>
+                            </div>
+                            <div class="rp-score-big">
+                                <span class="rp-score-num" id="hero-score">—</span>
+                                <span class="rp-score-den">/100</span>
+                            </div>
+                            <div class="rp-score-lbl" id="hero-score-lbl">—</div>
+                            <div class="rp-score-method">Basado en la metodología ABCD</div>
+                            <div class="rp-abcd-row">
+                                <div class="rp-abcd-cell">
+                                    <div class="rp-abcd-name">Attention</div>
+                                    <div class="rp-abcd-val" id="av-a">—</div>
+                                    <div class="rp-abcd-bar">
+                                        <div class="rp-abcd-fill" id="ab-a" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="rp-abcd-cell">
+                                    <div class="rp-abcd-name">Branding</div>
+                                    <div class="rp-abcd-val" id="av-b">—</div>
+                                    <div class="rp-abcd-bar">
+                                        <div class="rp-abcd-fill" id="ab-b" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="rp-abcd-cell">
+                                    <div class="rp-abcd-name">Connection</div>
+                                    <div class="rp-abcd-val" id="av-c">—</div>
+                                    <div class="rp-abcd-bar">
+                                        <div class="rp-abcd-fill" id="ab-c" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="rp-abcd-cell">
+                                    <div class="rp-abcd-name">Direction</div>
+                                    <div class="rp-abcd-val" id="av-d">—</div>
+                                    <div class="rp-abcd-bar">
+                                        <div class="rp-abcd-fill" id="ab-d" style="width:0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Stats -->
+                        <div class="rp-stats">
+                            <div class="rp-stat">
+                                <div class="rp-stat-icon"><span class="material-icons">search</span></div>
+                                <div>
+                                    <div class="rp-stat-num" id="st-hall">—</div>
+                                    <div class="rp-stat-lbl">Hallazgos relevantes</div>
+                                    <div class="rp-stat-sub">Identificados en el video</div>
+                                </div>
+                            </div>
+                            <div class="rp-stat">
+                                <div class="rp-stat-icon"><span class="material-icons">lightbulb</span></div>
+                                <div>
+                                    <div class="rp-stat-num" id="st-ops">—</div>
+                                    <div class="rp-stat-lbl">Oportunidades priorizadas</div>
+                                    <div class="rp-stat-sub">Acciones de alto impacto</div>
+                                </div>
+                            </div>
+                            <div class="rp-stat">
+                                <div class="rp-stat-icon"><span class="material-icons">public</span></div>
+                                <div>
+                                    <div class="rp-stat-num" id="st-geo">—</div>
+                                    <div class="rp-stat-lbl">Agrupaciones geográficas</div>
+                                    <div class="rp-stat-sub">Con mayor oportunidad</div>
+                                </div>
+                            </div>
+                            <div class="rp-stat">
+                                <div class="rp-stat-icon"><span class="material-icons">category</span></div>
+                                <div>
+                                    <div class="rp-stat-num" id="st-cat">—</div>
+                                    <div class="rp-stat-lbl">Categorías analizadas</div>
+                                    <div class="rp-stat-sub">Afinidad de contenido</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Exec Summary Row -->
+                <div class="rp-exec">
+                    <div class="rp-exec-left">
+                        <div class="rp-exec-icon"><span class="material-icons">bar_chart</span></div>
+                        <div>
+                            <h3>Resumen Ejecutivo</h3>
+                            <p id="exec-text">Importa el JSON del análisis Compass para ver el diagnóstico completo de
+                                la campaña.</p>
+                        </div>
+                    </div>
+                    <div class="rp-exec-col">
+                        <div class="rp-exec-col-ttl green"><span class="material-icons"
+                                style="font-size:15px;color:#22c55e;">check_circle</span> Fortalezas</div>
+                        <div id="exec-str">
+                            <div class="rp-exec-item str"><span class="material-icons">check_circle</span><span>Importa
+                                    el JSON para ver las fortalezas</span></div>
+                        </div>
+                    </div>
+                    <div class="rp-exec-col">
+                        <div class="rp-exec-col-ttl orange"><span class="material-icons"
+                                style="font-size:15px;color:#f97316;">circle</span> Oportunidades</div>
+                        <div id="exec-opp">
+                            <div class="rp-exec-item opp"><span class="material-icons">circle</span><span>Importa el
+                                    JSON para ver las oportunidades</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Preview Strip (6 cells) -->
+                <div class="rp-strip">
+
+                    <!-- Creative Highlights -->
+                    <div class="rp-strip-cell" onclick="switchPageById('page-hl')">
+                        <div class="rp-strip-hdr">
+                            <div class="rp-strip-ico" style="background:#f0fdf4"><span class="material-icons"
+                                    style="color:#16a34a">movie</span></div>
+                            <div>
+                                <div class="rp-strip-ttl">Creative Highlights</div>
+                                <div class="rp-strip-sub">Descubre los momentos clave del video y su impacto.</div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-content">
+                            <div class="rp-strip-thumbs" id="strip-thumbs">
+                                <div class="rp-strip-thumb"><span class="material-icons">image</span></div>
+                                <div class="rp-strip-thumb"><span class="material-icons">image</span></div>
+                                <div class="rp-strip-thumb"><span class="material-icons">image</span></div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-link">Ver sección <span class="material-icons">arrow_forward</span></div>
+                    </div>
+
+                    <!-- Geo Intelligence -->
+                    <div class="rp-strip-cell" onclick="switchPageById('page-geo')">
+                        <div class="rp-strip-hdr">
+                            <div class="rp-strip-ico" style="background:#eff6ff"><span class="material-icons"
+                                    style="color:#3b82f6">public</span></div>
+                            <div>
+                                <div class="rp-strip-ttl">Geo Intelligence</div>
+                                <div class="rp-strip-sub">Oportunidades geográficas clave por región.</div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-content">
+                            <div class="rp-strip-map"><span class="material-icons">map</span><span id="strip-geo-n">—
+                                    zonas</span></div>
+                        </div>
+                        <div class="rp-strip-link">Ver sección <span class="material-icons">arrow_forward</span></div>
+                    </div>
+
+                    <!-- Category Intelligence -->
+                    <div class="rp-strip-cell" onclick="switchPageById('page-cat')">
+                        <div class="rp-strip-hdr">
+                            <div class="rp-strip-ico" style="background:#fdf4ff"><span class="material-icons"
+                                    style="color:#9333ea">category</span></div>
+                            <div>
+                                <div class="rp-strip-ttl">Category Intelligence</div>
+                                <div class="rp-strip-sub">Categorías de contenido con mayor afinidad y oportunidad.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-content">
+                            <div class="rp-strip-bars" id="strip-cat-bars">
+                                <div class="rp-strip-bar-row"><span class="rp-strip-bar-name">—</span>
+                                    <div class="rp-strip-bar-track">
+                                        <div class="rp-strip-bar-fill" style="width:0%"></div>
+                                    </div><span class="rp-strip-bar-val">—</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-link">Ver sección <span class="material-icons">arrow_forward</span></div>
+                    </div>
+
+                    <!-- Oportunidades -->
+                    <div class="rp-strip-cell" onclick="switchPageById('page-ops')">
+                        <div class="rp-strip-hdr">
+                            <div class="rp-strip-ico" style="background:#fffbeb"><span class="material-icons"
+                                    style="color:#d97706">lightbulb</span></div>
+                            <div>
+                                <div class="rp-strip-ttl">Oportunidades</div>
+                                <div class="rp-strip-sub">Acciones priorizadas para maximizar resultados.</div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-content">
+                            <div class="rp-strip-chips">
+                                <div class="rp-op-chip alta">Alta prioridad <span
+                                        class="material-icons">chevron_right</span></div>
+                                <div class="rp-op-chip media">Media prioridad <span
+                                        class="material-icons">chevron_right</span></div>
+                                <div class="rp-op-chip baja">Baja prioridad <span
+                                        class="material-icons">chevron_right</span></div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-link">Ver sección <span class="material-icons">arrow_forward</span></div>
+                    </div>
+
+                    <!-- Metodología ABCD -->
+                    <div class="rp-strip-cell" onclick="switchPageById('page-abcd')">
+                        <div class="rp-strip-hdr">
+                            <div class="rp-strip-ico" style="background:#f0fdf4"><span class="material-icons"
+                                    style="color:#15803d">shield</span></div>
+                            <div>
+                                <div class="rp-strip-ttl">Metodología ABCD</div>
+                                <div class="rp-strip-sub">Conoce el marco de evaluación utilizado en el análisis.</div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-content">
+                            <div class="rp-strip-radar">
+                                <svg viewBox="0 0 110 95" class="rp-radar-svg">
+                                    <polygon points="55,8 100,35 100,75 55,88 10,75 10,35" fill="none" stroke="#e5e7eb"
+                                        stroke-width="1" />
+                                    <polygon points="55,28 82,45 82,70 55,78 28,70 28,45" fill="none" stroke="#e5e7eb"
+                                        stroke-width="1" />
+                                    <polygon points="55,48 68,55 68,65 55,69 42,65 42,55" fill="none" stroke="#e5e7eb"
+                                        stroke-width="1" />
+                                    <polygon id="radar-fill" points="55,14 92,38 92,72 55,82 18,72 18,38"
+                                        fill="rgba(174,243,102,0.18)" stroke="#aef366" stroke-width="1.5" />
+                                    <text x="55" y="5" text-anchor="middle" font-size="7" fill="#9ca3af"
+                                        font-family="Inter">Attention</text>
+                                    <text x="104" y="38" text-anchor="start" font-size="7" fill="#9ca3af"
+                                        font-family="Inter">Branding</text>
+                                    <text x="55" y="96" text-anchor="middle" font-size="7" fill="#9ca3af"
+                                        font-family="Inter">Direction</text>
+                                    <text x="6" y="78" text-anchor="end" font-size="7" fill="#9ca3af"
+                                        font-family="Inter">Con.</text>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="rp-strip-link">Ver sección <span class="material-icons">arrow_forward</span></div>
+                    </div>
+
+                    <!-- Próximos pasos -->
+                    <div class="rp-strip-cell" onclick="switchPageById('page-steps')">
+                        <div class="rp-strip-hdr">
+                            <div class="rp-strip-ico" style="background:#f0fdf4"><span class="material-icons"
+                                    style="color:#16a34a">check_circle</span></div>
+                            <div>
+                                <div class="rp-strip-ttl">Próximos pasos</div>
+                                <div class="rp-strip-sub">Recomendaciones finales para tu campaña.</div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-content">
+                            <div class="rp-strip-checklist" id="strip-steps">
+                                <div class="rp-strip-check"><span class="material-icons">check</span><span>Importa el
+                                        JSON para ver los pasos</span></div>
+                            </div>
+                        </div>
+                        <div class="rp-strip-link">Ver sección <span class="material-icons">arrow_forward</span></div>
+                    </div>
+
+                </div><!-- /rp-strip -->
+            </div><!-- /page-hero -->
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 2 — CREATIVE HIGHLIGHTS          -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page" id="page-hl">
+                <div class="wrap">
+                    <div class="ph">
+                        <div class="ph-icon"><span class="material-icons">star</span></div>
+                        <div>
+                            <h2>Creative Highlights</h2>
+                            <p>Los hallazgos creativos más relevantes identificados por Compass</p>
+                        </div>
+                    </div>
+                    <div class="cr-hl-grid" id="hl-grid">
+                        <div class="empty" style="grid-column:1/-1"><span
+                                class="material-icons">movie</span><span>Importa el JSON del análisis para ver los
+                                Creative Highlights</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 3 — GEO INTELLIGENCE             -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page" id="page-geo">
+                <div class="wrap">
+                    <div class="ph">
+                        <div class="ph-icon"><span class="material-icons">public</span></div>
+                        <div>
+                            <h2>Geo Intelligence</h2>
+                            <p>Oportunidades geográficas clave identificadas por Compass</p>
+                        </div>
+                    </div>
+                    <div class="geo-layout">
+                        <div class="geo-map-card">
+                            <div class="geo-map-hdr">
+                                <h3>Distribución geográfica</h3><span id="geo-sub">—</span>
+                            </div>
+                            <div class="geo-map-body"><span class="material-icons">map</span><span>Mapa disponible en la
+                                    plataforma Compass</span></div>
+                        </div>
+                        <div class="geo-sidebar" id="geo-side">
+                            <div class="empty"><span class="material-icons">public</span><span>Importa el JSON para ver
+                                    las regiones</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 4 — CATEGORY INTELLIGENCE        -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page" id="page-cat">
+                <div class="wrap">
+                    <div class="ph">
+                        <div class="ph-icon"><span class="material-icons">category</span></div>
+                        <div>
+                            <h2>Category Intelligence</h2>
+                            <p>Contextos donde el contenido presenta mayor afinidad creativa</p>
+                        </div>
+                    </div>
+                    <div class="cat-grid" id="cat-grid">
+                        <div class="empty" style="grid-column:1/-1"><span
+                                class="material-icons">category</span><span>Importa el JSON para ver las
+                                categorías</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 5 — OPORTUNIDADES                -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page" id="page-ops">
+                <div class="wrap">
+                    <div class="ph">
+                        <div class="ph-icon"><span class="material-icons">lightbulb</span></div>
+                        <div>
+                            <h2>Oportunidades Priorizadas</h2>
+                            <p>Las acciones de mayor impacto para transformar el análisis en decisiones creativas</p>
+                        </div>
+                    </div>
+                    <div class="op-list" id="op-list">
+                        <div class="empty"><span class="material-icons">lightbulb</span><span>Importa el JSON para ver
+                                las oportunidades</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 6 — METODOLOGÍA ABCD             -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page" id="page-abcd">
+                <div class="wrap">
+                    <div class="ph">
+                        <div class="ph-icon"><span class="material-icons">shield</span></div>
+                        <div>
+                            <h2>Metodología ABCD</h2>
+                            <p>El marco de evaluación creativa de Google utilizado en este análisis</p>
+                        </div>
+                    </div>
+                    <div class="abcd-grid">
+                        <div class="abcd-card A">
+                            <div class="abcd-bg-letter">A</div>
+                            <div class="abcd-card-icon"><span class="material-icons">visibility</span></div>
+                            <h3>Attention</h3>
+                            <p>Capacidad del video para captar la atención desde los primeros segundos y mantener al
+                                espectador enganchado a lo largo de la pieza.</p>
+                            <div class="abcd-card-score"><span class="lbl">Score obtenido</span><span class="val"
+                                    id="as-a">—</span></div>
+                        </div>
+                        <div class="abcd-card B">
+                            <div class="abcd-bg-letter">B</div>
+                            <div class="abcd-card-icon"><span class="material-icons">badge</span></div>
+                            <h3>Branding</h3>
+                            <p>Presencia, consistencia y reconocimiento de la marca a lo largo del video. Incluye logo,
+                                colores, producto y tagline.</p>
+                            <div class="abcd-card-score"><span class="lbl">Score obtenido</span><span class="val"
+                                    id="as-b">—</span></div>
+                        </div>
+                        <div class="abcd-card C">
+                            <div class="abcd-bg-letter">C</div>
+                            <div class="abcd-card-icon"><span class="material-icons">favorite</span></div>
+                            <h3>Connection</h3>
+                            <p>Capacidad del contenido para conectar emocionalmente con la audiencia mediante
+                                storytelling, humor o empatía cultural.</p>
+                            <div class="abcd-card-score"><span class="lbl">Score obtenido</span><span class="val"
+                                    id="as-c">—</span></div>
+                        </div>
+                        <div class="abcd-card D">
+                            <div class="abcd-bg-letter">D</div>
+                            <div class="abcd-card-icon"><span class="material-icons">ads_click</span></div>
+                            <h3>Direction</h3>
+                            <p>Claridad del siguiente paso esperado para el usuario. Presencia y efectividad del Call to
+                                Action en la pieza creativa.</p>
+                            <div class="abcd-card-score"><span class="lbl">Score obtenido</span><span class="val"
+                                    id="as-d">—</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════ -->
+            <!--  PAGE 7 — PRÓXIMOS PASOS               -->
+            <!-- ══════════════════════════════════════ -->
+            <div class="page" id="page-steps">
+                <div class="wrap">
+                    <div class="steps-layout">
+                        <div class="steps-intro">
+                            <h2>Compass recomienda<br><em>acciones concretas.</em></h2>
+                            <p>Con base en el análisis completo, la evaluación creativa ABCD, la inteligencia geográfica
+                                y las categorías de afinidad, estos son los próximos pasos priorizados para maximizar el
+                                impacto de la campaña.</p>
+                        </div>
+                        <div class="steps-list" id="steps-list">
+                            <div class="empty"><span class="material-icons">check_circle</span><span>Importa el JSON del
+                                    análisis para ver los próximos pasos</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /pages -->
+
+        <!-- BOTTOM BAR -->
+        <footer class="bottombar">
+            <div class="bb-left">
+                <strong id="bb-brand">Compass</strong>
+                <div class="bb-sep"></div><span id="bb-campaign">—</span>
+                <div class="bb-sep"></div><span id="bb-country">—</span>
+            </div>
+            <div class="bb-right">
+                <span>¿Necesitas ayuda?</span>
+                <a href="#"><span class="material-icons">help_outline</span> Consulta la guía del reporte</a>
+            </div>
+        </footer>
+
+    </div><!-- /shell -->
+
+    <!-- IMPORT MODAL -->
+    <div class="modal-bg" id="importModal">
+        <div class="modal">
+            <h2>Importar datos de Compass</h2>
+            <p>Pega el JSON completo generado por la plataforma Compass. Obtenlo desde la vista 3 del análisis haciendo
+                clic en <strong>"Compass Insights Editor"</strong>.</p>
+            <textarea id="jsonInput"
+                placeholder='{ "compassData": { "meta": {...}, "evaluacion_creativa": {...}, ... } }'></textarea>
+            <div id="importErr" class="modal-err"></div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-navy" onclick="importData()"><span class="material-icons"
+                        style="font-size:15px">check</span>Cargar datos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">
+        <div class="fab-hint" id="fabHint">💡 Pega el JSON de Compass para ver los datos reales</div>
+        <button class="fab-btn" onclick="openModal()"><span class="material-icons">upload_file</span></button>
+    </div>
+
+    <script>
+        /* ── PAGE SWITCH ── */
+        function switchPage(btn) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.page).classList.add('active');
+        }
+        function switchPageById(id) {
+            const btn = document.querySelector(`[data-page="${id}"]`);
+            if (btn) switchPage(btn);
+        }
+
+        /* ── MODAL ── */
+        function openModal() { document.getElementById('importModal').classList.add('open'); }
+        function closeModal() { document.getElementById('importModal').classList.remove('open'); }
+        document.getElementById('importModal').addEventListener('click', e => { if (e.target === document.getElementById('importModal')) closeModal(); });
+
+        /* ── HELPERS ── */
+        function normScore(s, max) { if (!s) return 0; if (s <= 100) return Math.round(s); return Math.round((s / (max || 1)) * 100); }
+        function dimScore(dims, abcd, key, max) {
+            if (dims && dims[key + '_score']) return normScore(dims[key + '_score'], max / 4);
+            const r = String(abcd && abcd[key] || '').match(/(\d+)/);
+            return r ? parseInt(r[1]) : 0;
+        }
+        function afClass(a) { const t = (a || '').toLowerCase(); return t.includes('alta') ? 'alta' : t.includes('media') ? 'media' : 'baja'; }
+        function afW(a) { const t = (a || '').toLowerCase(); return t.includes('muy alta') ? 92 : t.includes('alta') ? 76 : t.includes('media') ? 52 : 28; }
+        function fmtDate(d) { try { return new Date(d).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return d || '—'; } }
+        function impClass(i) { return i === 'Alto' ? 'alto' : i === 'Medio' ? 'medio' : 'bajo'; }
+
+        /* ── IMPORT ── */
+        function importData() {
+            const raw = document.getElementById('jsonInput').value.trim();
+            const err = document.getElementById('importErr');
+            err.style.display = 'none';
+            try {
+                const p = JSON.parse(raw);
+                renderReport(p.compassData || p);
+                closeModal();
+                document.getElementById('fabHint').style.display = 'none';
+            } catch (e) {
+                err.style.display = 'block'; err.textContent = 'JSON inválido: ' + e.message;
+            }
+        }
+
+        /* ── RENDER ── */
+        function renderReport(d) {
+            renderHero(d); renderHL(d); renderGeo(d); renderCat(d);
+            renderOps(d); renderABCD(d); renderSteps(d);
+        }
+
+        function renderHero(d) {
+            const m = d.meta || {}, e = d.evaluacion_creativa || {}, ab = e.abcd || {}, dim = e.abcd_dimensiones || {};
+            const ops = (d.prioridades?.oportunidades || []), geos = (d.geo_intelligence?.macro_estrategias || []), cats = (d.channel_intelligence?.contextos || []);
+            const max = e.score_max || 100, sc = normScore(e.score, max);
+
+            // topbar & footer
+            _t('tb-brand', m.brand); _t('tb-campaign', [m.campaign, m.country, m.objective].filter(Boolean).join(' | '));
+            _t('tb-date', fmtDate(m.date)); _t('bb-brand', m.brand); _t('bb-campaign', m.campaign); _t('bb-country', m.country);
+
+            // hero
+            _t('hero-dur', m.video_duration || '00:00');
+            _t('hero-score', sc || '—'); _t('hero-score-lbl', e.score_label || '—');
+
+            // ABCD bars
+            const aS = dimScore(dim, ab, 'attention', max), bS = dimScore(dim, ab, 'branding', max);
+            const cS = dimScore(dim, ab, 'connection', max), dS = dimScore(dim, ab, 'direction', max);
+            _t('av-a', aS + '/100'); _t('av-b', bS + '/100'); _t('av-c', cS + '/100'); _t('av-d', dS + '/100');
+            setTimeout(() => { _w('ab-a', aS); _w('ab-b', bS); _w('ab-c', cS); _w('ab-d', dS); }, 100);
+
+            // stats
+            _t('st-hall', (e.strengths || []).length + (e.weaknesses || []).length || '—');
+            _t('st-ops', ops.length || '—'); _t('st-geo', geos.length || '—'); _t('st-cat', cats.length || '—');
+
+            // exec text
+            _t('exec-text', e.descripcion || e.insight_principal || 'El análisis fue procesado correctamente.');
+
+            // strengths & weaknesses
+            const strEl = document.getElementById('exec-str');
+            strEl.innerHTML = (e.strengths || []).length ? (e.strengths).slice(0, 5).map(s => `<div class="rp-exec-item str"><span class="material-icons">check_circle</span><span>${s}</span></div>`).join('') :
+                '<div class="rp-exec-item str"><span class="material-icons">check_circle</span><span>No disponible</span></div>';
+
+            const oppEl = document.getElementById('exec-opp');
+            oppEl.innerHTML = (e.weaknesses || []).length ? (e.weaknesses).slice(0, 5).map(w => `<div class="rp-exec-item opp"><span class="material-icons">circle</span><span>${w}</span></div>`).join('') :
+                '<div class="rp-exec-item opp"><span class="material-icons">circle</span><span>No disponible</span></div>';
+
+            // strip: geo
+            _t('strip-geo-n', geos.length ? geos.length + ' zonas identificadas' : '— zonas');
+
+            // strip: cat bars
+            const catBarsEl = document.getElementById('strip-cat-bars');
+            if (cats.length) {
+                catBarsEl.innerHTML = cats.slice(0, 5).map(c => `<div class="rp-strip-bar-row">
+      <span class="rp-strip-bar-name">${c.categoria}</span>
+      <div class="rp-strip-bar-track"><div class="rp-strip-bar-fill" style="width:${afW(c.afinidad)}%"></div></div>
+      <span class="rp-strip-bar-val">${afW(c.afinidad)}%</span>
+    </div>`).join('');
+            }
+
+            // strip: steps
+            const stepsEl = document.getElementById('strip-steps');
+            if (ops.length) {
+                stepsEl.innerHTML = ops.slice(0, 4).map(op => `<div class="rp-strip-check"><span class="material-icons">check</span><span>${op.titulo || '—'}</span></div>`).join('');
+            }
+
+            // ABCD scores for ABCD page
+            _t('as-a', aS + '/100'); _t('as-b', bS + '/100'); _t('as-c', cS + '/100'); _t('as-d', dS + '/100');
+        }
+
+        function renderHL(d) {
+            const e = d.evaluacion_creativa || {}, ab = e.abcd || {};
+            const g = document.getElementById('hl-grid');
+            const items = [];
+            if (e.insight_principal) items.push({ type: 'Insight', icon: 'lightbulb', title: 'Hallazgo principal', finding: e.insight_principal, rec: (e.weaknesses || [])[0] || '' });
+            if (ab.attention) items.push({ type: 'Attention', icon: 'visibility', title: 'Atención inicial', finding: ab.attention, rec: '' });
+            if (ab.branding) items.push({ type: 'Branding', icon: 'badge', title: 'Presencia de marca', finding: ab.branding, rec: '' });
+            if (ab.connection) items.push({ type: 'Connection', icon: 'favorite', title: 'Conexión emocional', finding: ab.connection, rec: '' });
+            if (ab.direction) items.push({ type: 'Direction', icon: 'ads_click', title: 'Llamada a la acción', finding: ab.direction, rec: (e.weaknesses || []).slice(-1)[0] || '' });
+            if (!items.length) { g.innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="material-icons">movie</span><span>No hay highlights en los datos cargados</span></div>'; return; }
+            g.innerHTML = items.slice(0, 6).map(h => `<div class="cr-hl-card">
+    <div class="cr-hl-thumb"><span class="material-icons">${h.icon}</span><span class="cr-hl-type">${h.type}</span></div>
+    <div class="cr-hl-body"><h3>${h.title}</h3><p class="cr-hl-finding">${h.finding}</p>${h.rec ? `<div class="cr-hl-rec"><span class="material-icons">arrow_forward</span><span>${h.rec}</span></div>` : ''}</div>
+  </div>`).join('');
+        }
+
+        function renderGeo(d) {
+            const geo = d.geo_intelligence, side = document.getElementById('geo-side');
+            if (!geo?.macro_estrategias?.length) { side.innerHTML = '<div class="empty"><span class="material-icons">public</span><span>No se incluyó GeoKey en este análisis</span></div>'; return; }
+            const m = geo.macro_estrategias;
+            _t('geo-sub', m.length + ' agrupaciones identificadas');
+            side.innerHTML = m.slice(0, 5).map((z, i) => `<div class="geo-region ${i === 0 ? 'active' : ''}" onclick="this.parentNode.querySelectorAll('.geo-region').forEach(r=>r.classList.remove('active'));this.classList.add('active')">
+    <div class="geo-region-top"><h4>${z.zona || 'Zona ' + (i + 1)}</h4><span class="badge ${z.prioridad <= 1 ? 'bg-green' : z.prioridad <= 3 ? 'bg-amber' : 'bg-orange'}">${z.prioridad <= 1 ? 'Alta oportunidad' : z.prioridad <= 3 ? 'Oportunidad media' : 'Baja oportunidad'}</span></div>
+    <p class="geo-region-desc">${z.estrategia || z.insight_narrativo || '—'}</p>
+    ${z.audiencia ? `<div class="geo-region-aud"><span class="material-icons">people</span>${z.audiencia.toLocaleString()} audiencia est.</div>` : ''}
+  </div>`).join('');
+        }
+
+        function renderCat(d) {
+            const ci = d.channel_intelligence, g = document.getElementById('cat-grid');
+            if (!ci?.contextos?.length) { g.innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="material-icons">category</span><span>No se incluyeron categorías en este análisis</span></div>'; return; }
+            g.innerHTML = ci.contextos.map(c => {
+                const cls = afClass(c.afinidad), w = afW(c.afinidad);
+                const bc = cls === 'alta' ? 'bg-green' : cls === 'media' ? 'bg-amber' : 'bg-orange';
+                return `<div class="cat-card">
+      <div class="cat-card-top"><h3>${c.categoria}</h3><span class="badge ${bc}">${c.afinidad}</span></div>
+      <div class="cat-bar-wrap"><div class="cat-bar-row"><span>Afinidad creativa</span><span>${w}%</span></div><div class="cat-bar-track"><div class="cat-bar-fill ${cls}" style="width:${w}%"></div></div></div>
+      <p class="cat-finding">${(c.insights || [])[0] || 'Afinidad determinada por análisis semántico del contenido creativo.'}</p>
+      ${c.recomendaciones?.length ? `<div class="cat-recs">${c.recomendaciones.slice(0, 2).map(r => `<div class="cat-rec"><span class="material-icons">arrow_forward</span><span>${r}</span></div>`).join('')}</div>` : ''}
+    </div>`;
+            }).join('');
+        }
+
+        function renderOps(d) {
+            const ops = d.prioridades?.oportunidades || [], el = document.getElementById('op-list');
+            if (!ops.length) { el.innerHTML = '<div class="empty"><span class="material-icons">lightbulb</span><span>No hay oportunidades en los datos cargados</span></div>'; return; }
+            el.innerHTML = ops.map((op, i) => {
+                const cls = impClass(op.impacto), bc = cls === 'alto' ? 'bg-green' : cls === 'medio' ? 'bg-amber' : 'bg-blue';
+                const tc = (op.tipo || '').toLowerCase().includes('geo') ? 'bg-blue' : (op.tipo || '').toLowerCase().includes('cat') ? 'bg-amber' : 'bg-navy';
+                return `<div class="op-card ${cls}">
+      <div class="op-num-wrap"><span class="op-num">${op.prioridad || (i + 1)}</span><span class="badge ${bc}">${op.impacto || '—'}</span></div>
+      <div class="op-body"><h3>${op.titulo || 'Oportunidad ' + (i + 1)}</h3><p class="op-evidence">${op.evidencia || '—'}</p><div class="op-rec"><span class="material-icons">arrow_forward</span><span>${op.recomendacion || '—'}</span></div></div>
+      <div class="op-meta"><span class="badge ${tc}">${op.tipo || 'Creative'}</span><div class="op-meta-chip"><span class="lbl">Esfuerzo</span><span class="val">${op.esfuerzo || '—'}</span></div></div>
+    </div>`;
+            }).join('');
+        }
+
+        function renderABCD(d) { /* scores already set in renderHero */ }
+
+        function renderSteps(d) {
+            const ops = d.prioridades?.oportunidades || [], el = document.getElementById('steps-list');
+            if (!ops.length) { el.innerHTML = '<div class="empty"><span class="material-icons">check_circle</span><span>No hay próximos pasos disponibles</span></div>'; return; }
+            el.innerHTML = ops.slice(0, 4).map((op, i) => `<div class="cr-step">
+    <div class="step-num">${i + 1}</div>
+    <div class="step-body"><h4>${op.titulo || 'Acción ' + (i + 1)}</h4><p>${op.recomendacion || op.evidencia || '—'}</p></div>
+  </div>`).join('');
+        }
+
+        function _t(id, val) { const el = document.getElementById(id); if (el) el.textContent = val || '—'; }
+        function _w(id, pct) { const el = document.getElementById(id); if (el) el.style.width = pct + '%'; }
+
+        /* ── DEMO DATA ── */
+        const DEMO = {
+            meta: { brand: 'Motorola Edge 50 Ultra', campaign: 'Lanzamiento Q2', country: 'Colombia', objective: 'Awareness', date: new Date().toISOString(), video_duration: '00:30' },
+            evaluacion_creativa: {
+                score: 78, score_max: 100, score_label: 'Alto potencial creativo',
+                abcd: { attention: '76/100', branding: '80/100', connection: '82/100', direction: '72/100' },
+                abcd_dimensiones: { attention_score: 76, branding_score: 80, connection_score: 82, direction_score: 72 },
+                strengths: ['Hook inicial efectivo', 'Buena conexión emocional', 'Presencia de marca consistente', 'Mensaje claro y relevante'],
+                weaknesses: ['Aumentar visibilidad del producto', 'Fortalecer presencia de marca', 'Mejorar claridad del CTA', 'Optimizar duración del mensaje'],
+                descripcion: 'Compass identificó un video con alto potencial creativo, destacando un hook sólido y buena conexión con la audiencia. Existen oportunidades para fortalecer la visibilidad del producto, la presencia de marca y la claridad del siguiente paso.',
+                insight_principal: 'El video presenta una narrativa visualmente sólida con potencial de mejora en branding y CTA.'
+            },
+            geo_intelligence: {
+                macro_estrategias: [
+                    { zona: 'Centro Norte', audiencia: 2400000, prioridad: 1, estrategia: 'Alta concentración de audiencia joven con gran afinidad.' },
+                    { zona: 'Costa Caribe', audiencia: 1800000, prioridad: 2, estrategia: 'Crecimiento acelerado en consumo digital.' },
+                    { zona: 'Eje Cafetero', audiencia: 900000, prioridad: 3, estrategia: 'Audiencia de alto poder adquisitivo.' }],
+                micro_oportunidades: [], insights_narrativos: []
+            },
+            channel_intelligence: {
+                pregunta: '', contextos: [
+                    { categoria: 'Tecnología', afinidad: 'Muy alta', insights: ['Fuerte afinidad con audiencias tech-savvy.'], recomendaciones: ['Amplifica los elementos de innovación en los primeros 5s'] },
+                    { categoria: 'Estilo de vida', afinidad: 'Alta', insights: ['Afinidad con contenido aspiracional.'], recomendaciones: ['Enfatiza momentos de conexión emocional'] },
+                    { categoria: 'Gadgets', afinidad: 'Alta', insights: ['Alta afinidad con reviews y demos.'], recomendaciones: ['Muestra el producto en uso real'] },
+                    { categoria: 'Viajes', afinidad: 'Media', insights: ['Potencial para contextos de aventura.'], recomendaciones: ['Adapta el escenario a contextos de viaje'] },
+                    { categoria: 'Deportes', afinidad: 'Media', insights: ['Resonancia en audiencias activas.'], recomendaciones: ['Incorpora elementos de dinamismo visual'] }]
+            },
+            prioridades: {
+                pregunta: '', oportunidades: [
+                    { prioridad: 1, titulo: 'Refuerza el producto en los primeros 3 segundos', evidencia: 'El producto aparece visible solo a partir del segundo 8.', impacto: 'Alto', esfuerzo: 'Bajo', recomendacion: 'Añade un close-up del producto en los primeros 3s para maximizar el branding.', tipo: 'Creative' },
+                    { prioridad: 2, titulo: 'Integra un CTA más claro y directo', evidencia: 'El llamado a la acción aparece solo al final sin texto visible.', impacto: 'Alto', esfuerzo: 'Bajo', recomendacion: 'Añade una tarjeta de CTA desde el segundo 25 con texto y flecha.', tipo: 'Creative' },
+                    { prioridad: 3, titulo: 'Adapta el mensaje para regiones con mayor oportunidad', evidencia: 'Centro Norte y Costa Caribe presentan la mayor concentración.', impacto: 'Medio', esfuerzo: 'Medio', recomendacion: 'Crea variaciones adaptadas a los contextos de cada región prioritaria.', tipo: 'Geo' },
+                    { prioridad: 4, titulo: 'Amplifica la presencia de marca a lo largo del video', evidencia: 'La marca aparece 2 veces, por debajo del benchmark de 3+.', impacto: 'Medio', esfuerzo: 'Bajo', recomendacion: 'Incorpora el logo en al menos 2 momentos adicionales.', tipo: 'Creative' }]
+            }
+        };
+        window.addEventListener('DOMContentLoaded', () => renderReport(DEMO));
+    </script>
+</body>
+
+</html>

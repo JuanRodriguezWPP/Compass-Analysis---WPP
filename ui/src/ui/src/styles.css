@@ -16,7 +16,36 @@ limitations under the License.
 
 /* You can add global styles to this file, and also import other style files */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* H1 medium   */
+@font-face {
+  font-family: 'WPP Black';
+  src: url('https://cdn.nexus-creative-solutions.com/LATAM/applications/Compass-Analysis/Font/Webfonts/WPP-Medium.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* H2 */
+@font-face {
+  font-family: 'WPP Medium';
+  src: url('https://cdn.nexus-creative-solutions.com/LATAM/applications/Compass-Analysis/Font/Webfonts/WPP-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* H3 */
+@font-face {
+  font-family: 'WPP Regular';
+  src: url('https://cdn.nexus-creative-solutions.com/LATAM/applications/Compass-Analysis/Font/Webfonts/WPP-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'WPP Thin';
+  src: url('https://cdn.nexus-creative-solutions.com/LATAM/applications/Compass-Analysis/Font/Webfonts/WPP-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+}
 
 :root {
   --wpp-azul: #000050;
@@ -28,98 +57,132 @@ limitations under the License.
   --wpp-gris-claro: #f2f2f2;
   --wpp-gris-superclaro: #f9f9f9;
   --wpp-verde-oscuro: #1b5e20;
+  --wpp-text-title: #202124;
+  --wpp-text-desc: #000000;
 }
 
 html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
-  font-family: 'Inter', 'Google Sans', Roboto, 'Helvetica Neue', sans-serif;
-  background-color: #f0f2f8;
-  color: #000050;
+  font-family: 'WPP Thin', sans-serif;
+  background-color: var(--wpp-gris-claro);
+  color: var(--wpp-text-desc);
+  font-size: 14px;
+  font-weight: 100;
 }
+
+/* Escala de elementos visuales de texto */
+
+h1, h2, h3, .ca-title {
+  font-family: 'WPP Medium', sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--wpp-text-title);
+  margin: 0;
+}
+
+h4, .ca-subtitle {
+  font-family: 'WPP Regular', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--wpp-text-desc);
+  margin: 0;
+}
+
+p, span {
+  font-family: 'WPP Thin', sans-serif;
+}
+
+input {
+  font-family: 'WPP Thin', sans-serif !important;
+  margin: 0;
+  font-weight: 100 !important;
+}
+
 
 /* ── Global Dark Theme Overrides for Angular Material ─────────────────── */
 
 /* Expansion panels */
 .mat-expansion-panel {
   background: #ffffff !important;
-  color: #000050 !important;
-  border: 1px solid rgba(0, 0, 80, 0.1) !important;
+  color: var(--wpp-text-title) !important;
+  border: 1px solid rgba(32, 33, 36, 0.1) !important;
   border-radius: 16px !important;
-  box-shadow: 0 4px 24px rgba(0, 0, 80, 0.12) !important;
+  box-shadow: 0 4px 24px rgba(32, 33, 36, 0.12) !important;
 }
 
 .mat-expansion-panel-header {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 .mat-expansion-panel-header-title {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 .mat-expansion-panel-header-description {
-  color: rgba(0, 0, 80, 0.5) !important;
+  color: var(--wpp-text-desc) !important;
 }
 
 .mat-expansion-panel-body {
-  color: #000050 !important;
+  color: var(--wpp-text-desc) !important;
 }
 
 /* Toolbar */
 .mat-toolbar.mat-primary {
-  background: linear-gradient(135deg, #000050 0%, #000080 100%) !important;
+  background: linear-gradient(135deg, #000000 0%, #000080 100%) !important;
   border-bottom: 1px solid rgba(177, 253, 67, 0.2);
   box-shadow: 0 2px 12px rgba(0, 0, 80, 0.4);
 }
 
 /* Form fields */
 .mat-mdc-text-field-wrapper {
-  background-color: rgba(0, 0, 80, 0.05) !important;
+  background-color: rgba(32, 33, 36, 0.05) !important;
 }
 
 .mat-mdc-form-field {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 .mdc-text-field--outlined .mdc-notched-outline__leading,
 .mdc-text-field--outlined .mdc-notched-outline__notch,
 .mdc-text-field--outlined .mdc-notched-outline__trailing {
-  border-color: rgba(0, 0, 80, 0.2) !important;
+  border-color: rgba(32, 33, 36, 0.2) !important;
 }
 
 .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
 .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
 .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
-  border-color: #000050 !important;
+  border-color: var(--wpp-text-title) !important;
 }
 
 .mat-mdc-input-element,
 .mat-mdc-select-value,
 textarea.mat-mdc-input-element {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 .mat-mdc-form-field-label,
 .mdc-floating-label,
 .mat-mdc-select-placeholder {
-  color: rgba(0, 0, 80, 0.55) !important;
+  color: var(--wpp-text-desc) !important;
 }
 
 .mat-mdc-form-field-icon-prefix .mat-icon {
-  color: rgba(0, 0, 80, 0.5) !important;
+  color: var(--wpp-text-desc) !important;
 }
 
 /* Select dropdown */
 .mat-mdc-select-panel {
   background: #ffffff !important;
-  box-shadow: 0 8px 24px rgba(0,0,80,0.15) !important;
+  box-shadow: 0 8px 24px rgba(32, 33, 36, 0.15) !important;
 }
 
 .mat-mdc-option {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 .mat-mdc-option:hover:not(.mdc-list-item--disabled) {
@@ -129,7 +192,7 @@ textarea.mat-mdc-input-element {
 /* Buttons */
 .mat-mdc-raised-button.mat-primary {
   background: #B1FD43 !important;
-  color: #000050 !important;
+  color: #000000 !important;
   border-radius: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 0.3px;
@@ -144,16 +207,16 @@ textarea.mat-mdc-input-element {
 }
 
 .mat-mdc-icon-button {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 /* Cards */
 .mat-mdc-card {
   background: #ffffff !important;
-  color: #000050 !important;
-  border: 1px solid rgba(0, 0, 80, 0.1) !important;
+  color: var(--wpp-text-title) !important;
+  border: 1px solid rgba(32, 33, 36, 0.1) !important;
   border-radius: 12px !important;
-  box-shadow: 0 2px 12px rgba(0,0,80,0.08) !important;
+  box-shadow: 0 2px 12px rgba(32, 33, 36, 0.08) !important;
 }
 
 /* Tabs */
@@ -162,65 +225,65 @@ textarea.mat-mdc-input-element {
 }
 
 .mat-mdc-tab:not(.mdc-tab--active) .mdc-tab__text-label {
-  color: rgba(0, 0, 80, 0.45) !important;
+  color: var(--wpp-text-desc) !important;
 }
 
 .mdc-tab--active .mdc-tab__text-label {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
   font-weight: 600;
 }
 
 .mat-mdc-tab-body-content {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 /* Chips */
 .mat-mdc-chip {
-  background: rgba(0, 0, 80, 0.1) !important;
-  color: #000050 !important;
+  background: rgba(32, 33, 36, 0.1) !important;
+  color: var(--wpp-text-title) !important;
 }
 
 /* Slide toggle */
 .mat-mdc-slide-toggle {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 /* Checkbox */
 .mat-mdc-checkbox .mdc-label {
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
 }
 
 /* Divider */
 .mat-divider {
-  border-color: rgba(0, 0, 80, 0.1) !important;
+  border-color: rgba(32, 33, 36, 0.1) !important;
 }
 
 /* Button toggle group */
 .mat-button-toggle-group {
-  border-color: rgba(0, 0, 80, 0.15) !important;
+  border-color: rgba(32, 33, 36, 0.15) !important;
 }
 
 .mat-button-toggle {
   background: transparent !important;
-  color: rgba(0, 0, 80, 0.6) !important;
+  color: var(--wpp-text-desc) !important;
 }
 
 .mat-button-toggle-checked {
   background: rgba(177, 253, 67, 0.15) !important;
-  color: #000050 !important;
+  color: var(--wpp-text-title) !important;
   font-weight: 600;
 }
 
 /* Sidenav */
 .mat-drawer {
   background: #f5f6ff !important;
-  color: #000050 !important;
-  border-left: 1px solid rgba(0, 0, 80, 0.08) !important;
+  color: var(--wpp-text-title) !important;
+  border-left: 1px solid rgba(32, 33, 36, 0.08) !important;
 }
 
 .mat-sidenav-container {
-  background: #f0f2f8 !important;
-  color: #000050 !important;
+  background: var(--wpp-gris-claro) !important;
+  color: var(--wpp-text-title) !important;
 }
 
 /* Progress bar */
@@ -231,14 +294,14 @@ textarea.mat-mdc-input-element {
 
 /* Spinner */
 .mat-mdc-progress-spinner {
-  --mdc-circular-progress-active-indicator-color: #000050 !important;
+  --mdc-circular-progress-active-indicator-color: var(--wpp-text-title) !important;
 }
 
 /* Slider */
 .mat-mdc-slider {
   --mdc-slider-active-track-color: #B1FD43 !important;
-  --mdc-slider-inactive-track-color: rgba(0, 0, 80, 0.15) !important;
-  --mdc-slider-handle-color: #000050 !important;
+  --mdc-slider-inactive-track-color: rgba(32, 33, 36, 0.15) !important;
+  --mdc-slider-handle-color: var(--wpp-text-title) !important;
 }
 
 /* Scrollbar */
@@ -252,17 +315,24 @@ textarea.mat-mdc-input-element {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 80, 0.2);
+  background: rgba(32, 33, 36, 0.2);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 80, 0.35);
+  background: rgba(32, 33, 36, 0.35);
 }
 
 /* Stroked buttons */
 .mat-mdc-outlined-button,
 .mat-mdc-button {
-  color: #000050 !important;
-  border-color: rgba(0, 0, 80, 0.2) !important;
+  color: var(--wpp-text-title) !important;
+  border-color: rgba(32, 33, 36, 0.2) !important;
+}
+
+/* Hide top stepper menu */
+.main-stepper .mat-horizontal-stepper-header-container,
+.main-stepper .mat-horizontal-stepper-header,
+.main-stepper .mat-step-header {
+  display: none !important;
 }

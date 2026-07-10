@@ -391,19 +391,21 @@ export class AppComponent {
             muestra_de_datos_agrupados: demoResults // Muestra todas
           }, null, 2);
 
-          // Generar el paquete para la Inteligencia Artificial (Top 100 Zonas)
+          // Generar el paquete para la Inteligencia Artificial (Top 30 Zonas)
           const aiArray = Array.from(aiMap.values());
           aiArray.sort((a, b) => b.adultos - a.adultos); // Ordenar de mayor a menor demanda
-          const top100Zonas = aiArray.slice(0, 100); // Quedarnos con el Top 100
+          const top30Zonas = aiArray.slice(0, 30); // Quedarnos con el Top 30
 
           this.aiSummaryJson = JSON.stringify({
             contexto_estrategico: "Ranking de concentración de audiencia objetivo",
-            top_zonas_demanda: top100Zonas
+            top_zonas_demanda: top30Zonas
           }, null, 2);
 
           // Generar el paquete para Micro Oportunidades (Agrupación por cercanía)
-          const h3Array = Array.from(h3Map.entries()).map(([id, val]) => ({ id, adultos: val.adultos, estado: val.estado, municipio: val.municipio }));
+          // Nos quedamos con el Top 100 para evitar congelar la aplicación por la complejidad computacional
+          let h3Array = Array.from(h3Map.entries()).map(([id, val]) => ({ id, adultos: val.adultos, estado: val.estado, municipio: val.municipio }));
           h3Array.sort((a, b) => b.adultos - a.adultos);
+          h3Array = h3Array.slice(0, 100);
 
           const clusters: any[] = [];
           for (const hex of h3Array) {
@@ -576,10 +578,10 @@ export class AppComponent {
   getScoreColor(score: number): string {
     const max = this.getMaxScore();
     const ratio = score / max;
-    if (ratio >= 0.82) return '#1a73e8';
-    if (ratio >= 0.65) return '#188038';
-    if (ratio >= 0.47) return '#f29900';
-    return '#d93025';
+    if (ratio >= 0.82) return '#8b5cf6'; // Morado
+    if (ratio >= 0.65) return '#3b82f6'; // Azul
+    if (ratio >= 0.47) return '#f59e0b'; // Naranja claro
+    return '#f97316'; // Naranja intenso
   }
 
   selectedPromptOption = 'default';
@@ -707,6 +709,7 @@ export class AppComponent {
   @ViewChild('evalPromptPlaceholder')
   evalPromptPlaceholder?: ElementRef<HTMLDivElement>;
   @ViewChild(FileChooserComponent) fileChooserComponent!: FileChooserComponent;
+  @ViewChild('carouselTrack') carouselTrack?: ElementRef<HTMLDivElement>;
 
   constructor(
     private apiCallsService: ApiCallsService,
@@ -1295,7 +1298,34 @@ export class AppComponent {
       anchor.click();
       window.URL.revokeObjectURL(url);
     }
-  } selectedHistoryRun: string = '';
+  }
+
+  downloadCompassReport(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
+    if (!this.compassData) return;
+
+    // Use buildInsightsPayload to get the full report if needed, or just export compassData.
+    // I'll export compassData and the rest of the downloadable JSON.
+    const fullReport = this.buildInsightsPayload();
+    // Override or add compassData explicitly to ensure the edited fields are included
+    const reportData = {
+      ...fullReport,
+      compassData: this.compassData
+    };
+
+    const dataStr = JSON.stringify(reportData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'compass_report.json';
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  selectedHistoryRun: string = '';
 
   loadPreviousRun(folder: string) {
     this.loading = true;
@@ -1315,8 +1345,12 @@ export class AppComponent {
 
   isAnalysisInProgress = false;
   isAnalysisComplete = false;
-  activeDashboardTab = 'creative';
+  activeDashboardTab = 'resumen';
   currentProgressStep = 1;
+  /** Estado de edición por campo en la pestaña Compass Insights */
+  compassInsightsEditState: Record<string, boolean> = {};
+  /** Sub-pestaña activa dentro de Compass Insights */
+  compassInsightsTab = 'resumen';
 
   startAnalysisSimulation() {
     this.isAnalysisInProgress = true;
@@ -1339,9 +1373,120 @@ export class AppComponent {
     this.isAnalysisComplete = false;
   }
 
+  isCompassInsightsEditing(field: string): boolean {
+    return !!this.compassInsightsEditState[field];
+  }
+
+  toggleCompassInsightsEdit(field: string): void {
+    this.compassInsightsEditState[field] = !this.compassInsightsEditState[field];
+  }
+
+  setCompassInsightsTab(tab: string): void {
+    this.compassInsightsTab = tab;
+  }
+
+  getHighImpactOpportunitiesCount(): number {
+    return this.compassData?.prioridades?.oportunidades?.filter(o => o.impacto === 'Alto').length || 0;
+  }
+
+  getMediumEffortOpportunitiesCount(): number {
+    return this.compassData?.prioridades?.oportunidades?.filter(o => o.esfuerzo === 'Medio').length || 0;
+  }
+
+  /**
+   * Parsea JSON de forma robusta tolerando markdown de Gemini (backticks, espacios).
+   * Intenta primero JSON.parse directo, luego extrae del bloque de código, luego busca el primer objeto/array.
+   */
+  private safeParseJson(rawString: string): any {
+    if (!rawString) return null;
+    let s = rawString.trim();
+
+    // Intento 1: parseo directo
+    try {
+      return JSON.parse(s);
+    } catch (e) {
+      // continuo
+    }
+
+    // Intento 2: Remover delimitadores markdown si existen ```json ... ``` o ``` ... ```
+    const markdownRegex = /^```[a-zA-Z]*\n([\s\S]*?)```$/m;
+    const match = s.match(markdownRegex);
+    if (match && match[1]) {
+      try {
+        return JSON.parse(match[1].trim());
+      } catch (e) {
+        // continuo
+      }
+    }
+
+    // Intento 3: Encontrar el primer { o [ y el último } o ]
+    const firstBrace = s.indexOf('{');
+    const firstBracket = s.indexOf('[');
+    let startIdx = -1;
+    let isObject = true;
+
+    if (firstBrace !== -1 && firstBracket !== -1) {
+      if (firstBrace < firstBracket) { startIdx = firstBrace; isObject = true; }
+      else { startIdx = firstBracket; isObject = false; }
+    } else if (firstBrace !== -1) {
+      startIdx = firstBrace; isObject = true;
+    } else if (firstBracket !== -1) {
+      startIdx = firstBracket; isObject = false;
+    }
+
+    if (startIdx !== -1) {
+      const endChar = isObject ? '}' : ']';
+      const endIdx = s.lastIndexOf(endChar);
+      if (endIdx > startIdx) {
+        const potentialJson = s.substring(startIdx, endIdx + 1);
+        try {
+          return JSON.parse(potentialJson);
+        } catch (e) {
+          console.warn('safeParseJson failed even after extracting substring', e);
+        }
+      }
+    }
+
+    // Intento 4: Reparación de JSON truncado (muy común en LLMs)
+    if (s.startsWith('{') || s.startsWith('[')) {
+      try {
+        let fixed = s.trim();
+        // Remover trailing comma (e.g. `[ ,`) o texto incompleto (e.g. `[ "a", `)
+        fixed = fixed.replace(/,\s*$/, '');
+        // Contar llaves y corchetes
+        const openBraces = (fixed.match(/{/g) || []).length;
+        const closeBraces = (fixed.match(/}/g) || []).length;
+        const openBrackets = (fixed.match(/\[/g) || []).length;
+        const closeBrackets = (fixed.match(/\]/g) || []).length;
+
+        for (let i = 0; i < openBrackets - closeBrackets; i++) fixed += ']';
+        for (let i = 0; i < openBraces - closeBraces; i++) fixed += '}';
+
+        return JSON.parse(fixed);
+      } catch (e) {
+        console.warn('safeParseJson truncated repair failed', e);
+      }
+    }
+
+    console.warn('safeParseJson failed totally on:', rawString);
+    // En lugar de lanzar error y romper el flujo, retornamos un objeto vacío por defecto
+    return {};
+  }
+
   goToCompass() {
     this.isAnalysisInProgress = false;
     this.stepper.next();
+  }
+
+  skipToResults() {
+    if (this.stepper) {
+      this.stepper.linear = false;
+      this.stepper.selectedIndex = 2;
+      setTimeout(() => {
+        // Volver a poner en linear = true (o dejarlo en false si se prefiere)
+        // this.stepper.linear = true;
+      }, 0);
+    }
   }
 
   goToInsights() {
@@ -1464,9 +1609,22 @@ export class AppComponent {
         coverage: 0.6,   // Reducimos el tamaño para separar los hexágonos (efecto de puntos/píxeles)
         getHexagon: (d: any) => d.h3_id,
         getFillColor: (d: any) => {
-          const ratio = d.value / maxValue;
-          // Un color más parecido a tu referencia (tonos crema/dorado claro) con algo de calor
-          return [216 + (ratio * 39), 211 - (ratio * 50), 193 - (ratio * 100), 255];
+          // El usuario pidió que todo lo mayor a 100k sea Alta oportunidad
+          const ratio = Math.min(d.value / 100000, 1);
+
+          if (ratio < 0.33) {
+            // Orange (#f97316) to Amber (#f59e0b)
+            const r = ratio / 0.33;
+            return [249 + (245 - 249) * r, 115 + (158 - 115) * r, 22 + (11 - 22) * r, 255];
+          } else if (ratio < 0.66) {
+            // Amber (#f59e0b) to Emerald (#10b981)
+            const r = (ratio - 0.33) / 0.33;
+            return [245 + (16 - 245) * r, 158 + (185 - 158) * r, 11 + (129 - 11) * r, 255];
+          } else {
+            // Emerald (#10b981) to Dark Green (#059669)
+            const r = (ratio - 0.66) / 0.34;
+            return [16 + (5 - 16) * r, 185 + (150 - 185) * r, 129 + (105 - 129) * r, 255];
+          }
         },
         onHover: (info: any) => {
           const tooltip = document.getElementById('deck-tooltip');
@@ -1476,7 +1634,7 @@ export class AppComponent {
               tooltip.style.left = (info.x + 15) + 'px';
               tooltip.style.top = (info.y + 15) + 'px';
               tooltip.innerHTML = `
-                <div style="margin-bottom: 4px; font-weight: 500; color: #aef366; font-family: 'Outfit', sans-serif;">Detalle de Zona</div>
+                <div style="margin-bottom: 4px; font-weight: 500; color: #aef366;">Detalle de Zona</div>
                 <div style="margin-bottom: 2px;"><strong>ID:</strong> ${info.object.h3_id}</div>
                 <div style="margin-bottom: 2px;"><strong>Ubicación:</strong> ${info.object.municipio}, ${info.object.estado}</div>
                 <div><strong>Audiencia:</strong> ${info.object.value.toLocaleString()} personas</div>
@@ -1741,7 +1899,7 @@ export class AppComponent {
         CONFIG.maxRetries
       );
       this.previewVideoElem.nativeElement.onloadeddata = null;
-      
+
       // AUTO-INICIAR LA SECUENCIA SI ESTAMOS EN MODO COMPASS
       if (this.isAnalysisInProgress) {
         this.analyzeFullVideo();
@@ -1972,6 +2130,12 @@ export class AppComponent {
           score: ev.score || 0,
           score_max: this.getMaxScore(),
           score_label: this.getScoreLabel(ev.score || 0),
+          abcd_dimensiones: {
+            attention_score: ev.abcd_dimensiones?.attention_score || 0,
+            branding_score: ev.abcd_dimensiones?.branding_score || 0,
+            connection_score: ev.abcd_dimensiones?.connection_score || 0,
+            direction_score: ev.abcd_dimensiones?.direction_score || 0,
+          },
           abcd: {
             attention: ev.abcd?.attention || '',
             branding: ev.abcd?.branding || '',
@@ -1981,6 +2145,7 @@ export class AppComponent {
           strengths: ev.strengths || [],
           weaknesses: ev.weaknesses || [],
           descripcion: ev.description || '',
+          insight_principal: ev.description || '',
         };
       }
 
@@ -2002,17 +2167,47 @@ export class AppComponent {
             contexto_campania: this.compassData.contexto_campania,
             evaluacion_creativa: this.compassData.evaluacion_creativa,
           });
-          const geoResponseRaw = await firstValueFrom(
-            this.apiCallsService.generateGeoIntelligence(
-              contextParcial,
-              this.aiSummaryJson,
-              this.microOpportunitiesJson
-            )
-          );
-          const geoData = JSON.parse(geoResponseRaw);
+          let geoData: any = null;
+          let attempts = 0;
+          const maxAttempts = 3;
+          while (!geoData && attempts < maxAttempts) {
+            attempts++;
+            try {
+              const geoResponseRaw = await firstValueFrom(
+                this.apiCallsService.generateGeoIntelligence(
+                  contextParcial,
+                  this.aiSummaryJson,
+                  this.microOpportunitiesJson
+                )
+              );
+              console.log(`Compass: Geo Intelligence attempt ${attempts} raw response (first 800 chars):`, geoResponseRaw?.substring(0, 800));
+              const parsed = this.safeParseJson(geoResponseRaw);
+              // Validación flexible: el objeto existe y tiene la clave macro_estrategias (puede ser array vacío)
+              if (parsed && typeof parsed === 'object' && 'macro_estrategias' in parsed) {
+                geoData = parsed;
+                console.log(`Compass: Geo Intelligence attempt ${attempts} SUCCESS. macro_estrategias count:`, parsed.macro_estrategias?.length);
+              } else {
+                console.warn(`Compass: Geo Intelligence attempt ${attempts} returned empty or invalid data. Keys found:`, parsed ? Object.keys(parsed) : 'null');
+                console.warn(`Compass: Geo Intelligence attempt ${attempts} raw snippet:`, geoResponseRaw?.substring(0, 300));
+              }
+            } catch (e) {
+              console.warn(`Compass: Geo Intelligence attempt ${attempts} failed:`, e);
+            }
+            // Espera entre reintentos para evitar throttling
+            if (!geoData && attempts < maxAttempts) {
+              await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+          }
+
+          if (!geoData) {
+            throw new Error(`Failed to generate Geo Intelligence after ${maxAttempts} attempts.`);
+          }
+
+          console.log('Compass: Extracted Geo Intelligence', geoData);
           this.compassData.geo_intelligence = {
             macro_estrategias: geoData.macro_estrategias || [],
             micro_oportunidades: geoData.micro_oportunidades || [],
+            insights_narrativos: geoData.insights_narrativos || [],
           };
         } catch (geoError) {
           console.error('Compass: Geo Intelligence step failed (non-fatal)', geoError);
@@ -2030,13 +2225,40 @@ export class AppComponent {
             evaluacion_creativa: this.compassData.evaluacion_creativa,
             geo_intelligence: this.compassData.geo_intelligence,
           });
-          const channelResponseRaw = await firstValueFrom(
-            this.apiCallsService.generateChannelIntelligence(
-              contextParcial,
-              this.curatedChannels
-            )
-          );
-          const channelData = JSON.parse(channelResponseRaw);
+          let channelData: any = null;
+          let channelAttempts = 0;
+          const maxChannelAttempts = 3;
+          while (!channelData && channelAttempts < maxChannelAttempts) {
+            channelAttempts++;
+            try {
+              // Pasamos las seleccionadas + instrucción para que la IA evalúe 3 adicionales de alta afinidad
+              const categoriesPrompt = [
+                ...this.curatedChannels,
+                "--- INSTRUCCIÓN ADICIONAL ---: Además de las categorías anteriores, evalúa también obligatoriamente 3 categorías adicionales de la siguiente lista que tengan la MAYOR AFINIDAD posible con el video (que no estén ya seleccionadas): " + this.youtubeCategories.join(', ')
+              ];
+              const channelResponseRaw = await firstValueFrom(
+                this.apiCallsService.generateChannelIntelligence(
+                  contextParcial,
+                  categoriesPrompt
+                )
+              );
+              const parsed = this.safeParseJson(channelResponseRaw);
+              const contextos = Array.isArray(parsed) ? parsed : (parsed.contextos || []);
+              if (contextos.length > 0) {
+                channelData = parsed;
+              } else {
+                console.warn(`Compass: Channel Intelligence attempt ${channelAttempts} returned empty data. Retrying...`);
+              }
+            } catch (e) {
+              console.warn(`Compass: Channel Intelligence attempt ${channelAttempts} failed:`, e);
+            }
+          }
+
+          if (!channelData) {
+            throw new Error(`Failed to generate Channel Intelligence after ${maxChannelAttempts} attempts.`);
+          }
+
+          console.log('Compass: Extracted Channel Intelligence', channelData);
           const contextos = Array.isArray(channelData) ? channelData : (channelData.contextos || []);
           this.compassData.channel_intelligence = {
             pregunta: '¿En qué contextos funciona mejor el contenido?',
@@ -2052,10 +2274,32 @@ export class AppComponent {
       this.advanceStep(6);
       try {
         const fullContextJson = JSON.stringify(this.compassData);
-        const priorResponseRaw = await firstValueFrom(
-          this.apiCallsService.generatePrioritization(fullContextJson)
-        );
-        const priorData = JSON.parse(priorResponseRaw);
+        let priorData: any = null;
+        let priorAttempts = 0;
+        const maxPriorAttempts = 3;
+        while (!priorData && priorAttempts < maxPriorAttempts) {
+          priorAttempts++;
+          try {
+            const priorResponseRaw = await firstValueFrom(
+              this.apiCallsService.generatePrioritization(fullContextJson)
+            );
+            const parsed = this.safeParseJson(priorResponseRaw);
+            const oportunidades = Array.isArray(parsed) ? parsed : (parsed.oportunidades || []);
+            if (oportunidades.length > 0) {
+              priorData = parsed;
+            } else {
+              console.warn(`Compass: Prioritization attempt ${priorAttempts} returned empty data. Retrying...`);
+            }
+          } catch (e) {
+            console.warn(`Compass: Prioritization attempt ${priorAttempts} failed:`, e);
+          }
+        }
+
+        if (!priorData) {
+          throw new Error(`Failed to generate Prioritization after ${maxPriorAttempts} attempts.`);
+        }
+
+        console.log('Compass: Extracted Prioritization Insights', priorData);
         const oportunidades = Array.isArray(priorData) ? priorData : (priorData.oportunidades || []);
         this.compassData.prioridades = {
           pregunta: '¿Qué debería hacer ahora?',
@@ -2069,6 +2313,7 @@ export class AppComponent {
       // ── PASO 7 (SIMULADO): Generando Compass Insights ──────────────────────
       this.advanceStep(7);
       this.compassJson = JSON.stringify(this.compassData, null, 2);
+      console.log('Compass: MEGA JSON COMPLETO FINAL (Vista 3):', this.compassData);
 
       // Breve pausa visual antes de habilitar el botón final (agregado +5 segundos)
       await new Promise(resolve => setTimeout(resolve, 6200));
@@ -2088,8 +2333,27 @@ export class AppComponent {
 
   getAbcdScorePercentage(): number {
     if (!this.fullVideoEvaluationResult) return 0;
-    // The AI is now instructed to return a score out of 100 directly.
-    return this.fullVideoEvaluationResult.score || 0;
+    const score = this.fullVideoEvaluationResult.score || 0;
+    const maxScore = this.getMaxScore();
+
+    // If for some reason the LLM returned a percentage instead of raw score
+    if (score > maxScore && score <= 100) {
+      return score;
+    }
+
+    return Math.round((score / maxScore) * 100);
+  }
+
+  getSubScorePercentage(rawScore: number | undefined | null): number {
+    if (rawScore == null) return 0;
+    const maxScore = this.getMaxScore();
+    const maxSubScore = maxScore / 4; // Since there are 4 dimensions (ABCD)
+
+    if (rawScore > maxSubScore && rawScore <= 100) {
+      return rawScore;
+    }
+
+    return Math.round((rawScore / maxSubScore) * 100);
   }
 
   getAbcdScoreBadge(): string {
@@ -2104,9 +2368,115 @@ export class AppComponent {
   getAbcdScoreColorClass(): string {
     const percentage = this.getAbcdScorePercentage();
     if (percentage === 0) return 'gray';
-    if (percentage >= 75) return 'green';
-    if (percentage >= 50) return 'orange';
-    return 'red';
+    if (percentage >= 75) return 'purple';
+    if (percentage >= 50) return 'blue';
+    return 'orange';
+  }
+
+  selectedSceneIndex: number = 0;
+
+  formatSeconds(secs?: number): string {
+    if (secs == null) return '00:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  scrollTimeline(direction: number): void {
+    if (this.carouselTrack?.nativeElement) {
+      const scrollAmount = 300; // Scroll by roughly two items
+      this.carouselTrack.nativeElement.scrollBy({
+        left: direction * scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  getOpportunityImage(timeRef?: string): string | null {
+    if (!timeRef || !this.avSegments || this.avSegments.length === 0) return null;
+
+    const match = timeRef.match(/(\d+):(\d+)/);
+    let targetSeconds = 0;
+    if (match) {
+      targetSeconds = parseInt(match[1]) * 60 + parseInt(match[2]);
+    } else {
+      const matchSec = timeRef.match(/(\d+)/);
+      if (matchSec) targetSeconds = parseInt(matchSec[1]);
+    }
+
+    let closestSegment = this.avSegments[0];
+    let minDiff = Infinity;
+    for (const seg of this.avSegments) {
+      const diff = Math.abs(seg.start_s - targetSeconds);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestSegment = seg;
+      }
+    }
+    return closestSegment?.segment_screenshot_uri || null;
+  }
+
+  private _cachedSceneAnalysis: any[] = [];
+  private _lastEv: any = null;
+  private _lastSegments: any = null;
+
+  getSceneAnalysis(): any[] {
+    const ev = this.fullVideoEvaluationResult;
+    const segments = this.avSegments || [];
+
+    if (this._lastEv === ev && this._lastSegments === segments) {
+      return this._cachedSceneAnalysis;
+    }
+
+    this._lastEv = ev;
+    this._lastSegments = segments;
+
+    if (!ev || segments.length === 0) {
+      this._cachedSceneAnalysis = [];
+      return this._cachedSceneAnalysis;
+    }
+
+    const numSegments = segments.length;
+
+    this._cachedSceneAnalysis = [
+      {
+        id: 'A',
+        name: 'Atención',
+        tagClass: 'tag-a',
+        title: 'Hook y Atención Visual',
+        description: ev.abcd?.attention || 'Análisis de atención visual y auditiva.',
+        score: this.getSubScorePercentage(ev.abcd_dimensiones?.attention_score),
+        segment: segments[0]
+      },
+      {
+        id: 'B',
+        name: 'Branding',
+        tagClass: 'tag-b',
+        title: 'Presencia de Marca',
+        description: ev.abcd?.branding || 'Evaluación de presencia de marca y logo.',
+        score: this.getSubScorePercentage(ev.abcd_dimensiones?.branding_score),
+        segment: segments[Math.floor(numSegments * 0.33)] || segments[0]
+      },
+      {
+        id: 'C',
+        name: 'Conexión',
+        tagClass: 'tag-c',
+        title: 'Conexión Emocional',
+        description: ev.abcd?.connection || 'Ritmo, narrativa y conexión.',
+        score: this.getSubScorePercentage(ev.abcd_dimensiones?.connection_score),
+        segment: segments[Math.floor(numSegments * 0.66)] || segments[0]
+      },
+      {
+        id: 'D',
+        name: 'Deseo',
+        tagClass: 'tag-d',
+        title: 'Llamado a la Acción',
+        description: ev.abcd?.direction || 'Claridad del mensaje final.',
+        score: this.getSubScorePercentage(ev.abcd_dimensiones?.direction_score),
+        segment: segments[numSegments - 1]
+      }
+    ];
+    return this._cachedSceneAnalysis;
   }
 
   generateVariants() {
@@ -3214,7 +3584,131 @@ export class AppComponent {
     }
   }
 
-  addToRenderQueue() {
+  // --- COMPASS DASHBOARD HELPER METHODS --- //
+
+  expandedGeoCard: number | null = null;
+
+  toggleGeoCard(index: number) {
+    this.expandedGeoCard = this.expandedGeoCard === index ? null : index;
+  }
+
+  getGeoPriorityClass(prioridad: number): string {
+    switch (prioridad) {
+      case 1: return 'group-very-high';
+      case 2: return 'group-high';
+      case 3: return 'group-medium';
+      case 4: return 'group-low';
+      default: return 'group-medium';
+    }
+  }
+
+  getGeoPriorityLabel(prioridad: number): string {
+    switch (prioridad) {
+      case 1: return 'Muy alta oportunidad';
+      case 2: return 'Alta oportunidad';
+      case 3: return 'Oportunidad media';
+      case 4: return 'Baja oportunidad';
+      default: return 'Oportunidad media';
+    }
+  }
+
+  getGeoBadgeClass(prioridad: number): string {
+    switch (prioridad) {
+      case 1: return 'geo-badge-purple'; // which we reassigned to dark green
+      case 2: return 'geo-badge-green';
+      case 3: return 'geo-badge-yellow';
+      case 4: return 'geo-badge-orange';
+      default: return 'geo-badge-yellow';
+    }
+  }
+
+  getCategoryIcon(categoria: string): string {
+    const text = categoria?.toLowerCase() || '';
+    if (text.includes('tecnología') || text.includes('technology') || text.includes('tech')) return 'computer';
+    if (text.includes('música') || text.includes('music')) return 'music_note';
+    if (text.includes('juego') || text.includes('gaming')) return 'sports_esports';
+    if (text.includes('deporte') || text.includes('sports') || text.includes('futbol') || text.includes('fútbol')) return 'sports_soccer';
+    if (text.includes('educación') || text.includes('education')) return 'school';
+    if (text.includes('entretenimiento') || text.includes('entertainment') || text.includes('película') || text.includes('peliculas') || text.includes('cine') || text.includes('film') || text.includes('movie') || text.includes('cortos') || text.includes('tráilers') || text.includes('trailer')) return 'movie';
+    if (text.includes('noticia') || text.includes('news')) return 'article';
+    if (text.includes('moda') || text.includes('fashion') || text.includes('ropa')) return 'checkroom';
+    if (text.includes('viaje') || text.includes('travel') || text.includes('turismo')) return 'flight';
+    if (text.includes('comida') || text.includes('food') || text.includes('gastronomía')) return 'restaurant';
+    if (text.includes('comedia') || text.includes('comedy') || text.includes('humor')) return 'sentiment_very_satisfied';
+    if (text.includes('salud') || text.includes('health') || text.includes('fitness')) return 'fitness_center';
+    if (text.includes('belleza') || text.includes('beauty')) return 'face_retouching_natural';
+    if (text.includes('finanzas') || text.includes('finance') || text.includes('economía')) return 'attach_money';
+    if (text.includes('vehículo') || text.includes('auto') || text.includes('motor') || text.includes('automoción')) return 'directions_car';
+    if (text.includes('hogar') || text.includes('home')) return 'home';
+    if (text.includes('mascota') || text.includes('pets') || text.includes('animales')) return 'pets';
+    if (text.includes('arte') || text.includes('art') || text.includes('cultura')) return 'palette';
+    if (text.includes('ciencia') || text.includes('science')) return 'science';
+    if (text.includes('negocio') || text.includes('business') || text.includes('empresa') || text.includes('corporativo')) return 'business_center';
+    if (text.includes('estilo de vida') || text.includes('lifestyle')) return 'self_improvement';
+    if (text.includes('familia') || text.includes('family') || text.includes('niños') || text.includes('kids') || text.includes('parenting')) return 'family_restroom';
+    if (text.includes('política') || text.includes('politics') || text.includes('gobierno')) return 'gavel';
+    if (text.includes('sociedad') || text.includes('society')) return 'people';
+    return 'category';
+  }
+
+  getAffinityColorClass(afinidad: string): string {
+    const text = afinidad?.toLowerCase() || '';
+    if (text.includes('alta')) return 'green';
+    if (text.includes('media')) return 'yellow';
+    if (text.includes('baja')) return 'red';
+    return 'blue';
+  }
+
+  getAffinityIcon(afinidad: string): string {
+    const text = afinidad?.toLowerCase() || '';
+    if (text.includes('alta')) return 'check_circle';
+    if (text.includes('media')) return 'info';
+    if (text.includes('baja')) return 'warning';
+    return 'circle';
+  }
+
+
+  getAffinityScore(afinidad: string): number {
+    const text = afinidad?.toLowerCase() || '';
+    if (text.includes('alta')) return 90;
+    if (text.includes('media')) return 65;
+    if (text.includes('baja')) return 40;
+    return 10;
+  }
+
+  getHighAffinityCount(): number {
+    if (!this.compassData?.channel_intelligence?.contextos) return 0;
+    return this.compassData.channel_intelligence.contextos.filter(c => c.afinidad.toLowerCase().includes('alta')).length;
+  }
+
+  getSelectedContexts(): any[] {
+    const contextos = this.compassData?.channel_intelligence?.contextos;
+    if (!contextos || !Array.isArray(contextos)) return [];
+    if (!this.curatedChannels || this.curatedChannels.length === 0) return contextos;
+
+    // Filtrar solo las categorías que el usuario realmente seleccionó
+    const selected = contextos.filter(c => this.curatedChannels.includes(c.categoria));
+    // Si por alguna razón está vacío (ej. la IA devolvió nombres distintos), retornar todo
+    return selected.length > 0 ? selected : contextos;
+  }
+
+  getTopRecommendedCategories(): any[] {
+    const contextos = this.compassData?.channel_intelligence?.contextos;
+    if (!contextos || !Array.isArray(contextos)) return [];
+
+    // Clonamos para no mutar el array original y ordenamos usando getAffinityScore
+    const sorted = [...contextos].sort((a, b) => {
+      const aRank = this.getAffinityScore(a.afinidad);
+      const bRank = this.getAffinityScore(b.afinidad);
+      return bRank - aRank; // Mayor puntaje primero
+    });
+
+    return sorted.slice(0, 3);
+  }
+
+  // ---------------------------------------- //
+
+  async addToRenderQueue() {
     const variant = this.variants![this.selectedVariant];
     const selectedSegments = this.avSegments!.filter(
       (segment: AvSegment) => segment.selected

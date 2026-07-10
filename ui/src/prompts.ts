@@ -21,15 +21,15 @@
  */
 
 export const PROMPTS = {
-    /**
-     * ABCD Business Objectives Evaluation Prompts
-     * These prompts are used to evaluate video variants against different marketing objectives.
-     */
-    abcdBusinessObjectives: {
-        awareness: {
-            displayName: 'Reconocimiento (Awareness)',
-            value: 'awareness',
-    promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following Awareness ABCD criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement *only where applicable*.
+  /**
+   * ABCD Business Objectives Evaluation Prompts
+   * These prompts are used to evaluate video variants against different marketing objectives.
+   */
+  abcdBusinessObjectives: {
+    awareness: {
+      displayName: 'Reconocimiento (Awareness)',
+      value: 'awareness',
+      promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following Awareness ABCD criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement *only where applicable*.
     **IMPORTANT:** The evaluation is based exclusively on the visual script and segment descriptions provided. Do NOT evaluate or score any audio, music, narration, or sound elements — these are not available for analysis.
     *   **A - Attention (0-3 points):**
         *   **Impactful Opening (0-2 points):**
@@ -81,11 +81,11 @@ export const PROMPTS = {
     **Remember:** These criteria are interconnected. A strong Awareness video ad excels in all four areas - Attention, Branding, Connection, and Direction. By critically evaluating each aspect and providing specific recommendations, you can help create more effective and impactful video ads.
 2.  **Total Score:** Sum up the points for each criterion to calculate the total score (out of 15).
 3.  **Justification:** Provide detailed reasoning for the overall score, citing specific examples from the video script to support your evaluation. Be precise and analytical, focusing on the strengths and weaknesses of the ad in relation to the Awareness objective.`,
-        },
-        consideration: {
-            displayName: 'Consideración',
-            value: 'consideration',
-            promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following Consideration ABCD criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
+    },
+    consideration: {
+      displayName: 'Consideración',
+      value: 'consideration',
+      promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following Consideration ABCD criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
     **IMPORTANT:** The evaluation is based exclusively on the visual script and segment descriptions provided. Do NOT evaluate or score any audio, music, narration, or sound elements — these are not available for analysis.
     *   **A - Attention (0-4 points):**
         *   **Immersive Storytelling (0-2 points):**
@@ -137,11 +137,11 @@ export const PROMPTS = {
     **Remember:** These criteria are designed to help you critically evaluate YouTube Consideration video ads. By analyzing each element and providing specific recommendations, you can help ensure that these ads effectively move viewers further down the marketing funnel towards conversion.
 2.  **Total Score:** Sum up the points for each criterion to calculate the total score (out of 15).
 3.  **Justification:** Provide detailed reasoning for the overall score, citing specific examples from the video script to support your evaluation. Be precise and analytical, focusing on the strengths and weaknesses of the ad in relation to the Consideration objective.`,
-        },
-        action: {
-            displayName: 'Acción',
-            value: 'action',
-            promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following Action ABCD criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
+    },
+    action: {
+      displayName: 'Acción',
+      value: 'action',
+      promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following Action ABCD criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
     *   **A - Attention (0-5 points):**
         *   **Viewable Area (0-1 point):**
             *   **1 point:** All essential visuals, including text and key elements, are kept within the viewable area of the screen.
@@ -201,11 +201,11 @@ export const PROMPTS = {
     **Remember:** Action ads are all about driving conversions. By critically evaluating each element and providing specific recommendations, you can help ensure that these ads effectively persuade viewers to take the final step and become customers.
 2.  **Total Score:** Sum up the points for each criterion to calculate the total score (out of 18).
 3.  **Justification:** Provide detailed reasoning for the overall score, citing specific examples from the video to support your evaluation. Be precise and analytical, focusing on the strengths and weaknesses of the ad in relation to the Action objective.`,
-        },
-        shorts: {
-            displayName: 'Redes Sociales (YouTube Shorts)',
-            value: 'shorts',
-            promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following YouTube Shorts ABCD criteria, keeping in mind Shorts' compound nature across Awareness, Consideration, and Action objectives. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
+    },
+    shorts: {
+      displayName: 'Redes Sociales (YouTube Shorts)',
+      value: 'shorts',
+      promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against the following YouTube Shorts ABCD criteria, keeping in mind Shorts' compound nature across Awareness, Consideration, and Action objectives. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
     *   **A - Attention (0-6 points):**
         *   **Authenticity (0-2 points):**
             *   **2 points:** The ad feels native to the Shorts experience, blending seamlessly with organic content and avoiding an overly polished or "ad-like" feel.
@@ -264,35 +264,35 @@ export const PROMPTS = {
     **Remember:** Effective YouTube Shorts ads are tailored to the platform's unique DNA, leveraging authenticity, personalization, and an upbeat tone to connect with viewers. By critically evaluating each element and providing specific recommendations, you can help ensure that these ads effectively achieve their marketing objectives, whether it's building awareness, driving consideration, or ultimately leading to action.
 2.  **Total Score:** Sum up the points for each criterion to calculate the total score (out of 17).
 3.  **Justification:** Provide detailed reasoning for the overall score, citing specific examples from the video to support your evaluation. Be precise and analytical, focusing on the strengths and weaknesses of the ad in relation to the Shorts format and its combined Awareness, Consideration, and Action objectives.`,
-        },
-        general: {
-            displayName: 'General',
-            value: 'general',
-            promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against general marketing effectiveness criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
+    },
+    general: {
+      displayName: 'General',
+      value: 'general',
+      promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against general marketing effectiveness criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
     *   **A - Attention (0-5 points):** Does the video grab attention early? Are the visuals and pacing engaging?
     *   **B - Branding (0-5 points):** Is the brand clearly presented? Are brand elements well integrated?
     *   **C - Connection (0-5 points):** Does the video connect emotionally or logically with the viewer? Is the message clear?
     *   **D - Direction (0-5 points):** Is there a clear call to action or next step for the viewer?
 2.  **Total Score:** Sum up the points for each criterion to calculate the total score (out of 20).
 3.  **Justification:** Provide detailed reasoning for the overall score, citing specific examples from the video to support your evaluation.`,
-        },
-        engagement: {
-            displayName: 'Interacción (Engagement)',
-            value: 'engagement',
-            promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against Engagement criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
+    },
+    engagement: {
+      displayName: 'Interacción (Engagement)',
+      value: 'engagement',
+      promptPart: `1.  **Role:** Act as a highly analytical critic (140 IQ), meticulously evaluating each generated script combination against Engagement criteria. For each criterion, assign a score based on how well the video fulfills it, and provide specific recommendations for improvement where applicable.
     *   **A - Attention (0-5 points):** Does it capture interest immediately with striking visuals or hooks?
     *   **B - Branding (0-5 points):** Is the brand naturally woven into an engaging story without being disruptive?
     *   **C - Connection (0-5 points):** Does it foster community, spark conversations, or deeply resonate emotionally?
     *   **D - Direction (0-5 points):** Does it encourage users to interact, comment, share, or spend more time with the brand?
 2.  **Total Score:** Sum up the points for each criterion to calculate the total score (out of 20).
 3.  **Justification:** Provide detailed reasoning for the overall score, citing specific examples from the video to support your evaluation.`,
-        },
     },
+  },
 
-    /**
-     * Text Assets Generation Prompts
-     */
-    textAssetsGenerationPrompt: `You are a leading digital marketer and an expert at crafting high-performing search ad headlines and descriptions that captivate users and drive conversions.
+  /**
+   * Text Assets Generation Prompts
+   */
+  textAssetsGenerationPrompt: `You are a leading digital marketer and an expert at crafting high-performing search ad headlines and descriptions that captivate users and drive conversions.
     Follow these instructions in order:
 
     1. **Analyze the Video**: Carefully analyze the video ad to identify the brand, key products or services, unique selling points, and the core message conveyed.
@@ -321,13 +321,13 @@ export const PROMPTS = {
     Output in {{videoLanguage}}.
     `,
 
-    textAssetsBadExamplePromptPart:
-        "3. **Unwanted Example**: Here's an example of a Headline and Description that I DO NOT want you to generate: Headline: {{headline}} Description: {{description}}",
+  textAssetsBadExamplePromptPart:
+    "3. **Unwanted Example**: Here's an example of a Headline and Description that I DO NOT want you to generate: Headline: {{headline}} Description: {{description}}",
 
-    /**
-     * Prompt for evaluating the original full video
-     */
-    fullVideoEvaluationPrompt: `You are a highly analytical expert in marketing and video ad evaluation.
+  /**
+   * Prompt for evaluating the original full video
+   */
+  fullVideoEvaluationPrompt: `You are a highly analytical expert in marketing and video ad evaluation.
     Your task is to analyze the following original video script and evaluate it IN ITS ENTIRETY according to the selected business objective.
     
     **DO NOT generate shorter variants or combinations. Evaluate the entire original script exactly as it is.**
@@ -351,6 +351,12 @@ export const PROMPTS = {
         "description": "[Short but detailed explanation IN SPANISH of the video's overall coherence, engagement, and effectiveness]",
         "score": "[Total points earned - sum all points from all ABCD criteria. Do NOT convert to 1-5 scale, output the raw total.]",
         "duration": "[Sum of the durations of all scenes in seconds]",
+        "abcd_dimensiones": {
+          "attention_score": 80,
+          "branding_score": 75,
+          "connection_score": 90,
+          "direction_score": 60
+        },
         "abcd": {
           "attention": "[Detailed evaluation IN SPANISH for the A - Attention criterion. Describe strengths and weaknesses based on the rubric.]",
           "branding": "[Detailed evaluation IN SPANISH for the B - Branding criterion.]",
@@ -368,10 +374,10 @@ export const PROMPTS = {
       }
     ]`,
 
-    /**
-     * Video Variant Generation Prompts
-     */
-    generationPrompt: `**Objective:** Generate shorter, highly engaging video ad scripts by strategically combining scenes from a provided script, focusing on maximizing impact and adhering to specific criteria.
+  /**
+   * Video Variant Generation Prompts
+   */
+  generationPrompt: `**Objective:** Generate shorter, highly engaging video ad scripts by strategically combining scenes from a provided script, focusing on maximizing impact and adhering to specific criteria.
 
     **Instructions:**
 
@@ -420,6 +426,12 @@ export const PROMPTS = {
         "description": "[Short but detailed explanation IN SPANISH of the combination's coherence, engagement, and effectiveness]",
         "score": "[Total points earned - sum all points from all ABCD criteria. Do NOT convert to 1-5 scale, output the raw total.]",
         "duration": "[Calculated duration of the combination in seconds]",
+        "abcd_dimensiones": {
+          "attention_score": 80,
+          "branding_score": 75,
+          "connection_score": 90,
+          "direction_score": 60
+        },
         "abcd": {
           "attention": "[Detailed evaluation IN SPANISH for the A - Attention criterion. Describe strengths and weaknesses based on the rubric.]",
           "branding": "[Detailed evaluation IN SPANISH for the B - Branding criterion.]",
@@ -452,7 +464,7 @@ export const PROMPTS = {
 
     `,
 
-    aspectRatioOnlyPrompt: `**Objective:** Generate video variants optimized for different aspect ratios by creating different framing strategies while including ALL scenes from the original video.
+  aspectRatioOnlyPrompt: `**Objective:** Generate video variants optimized for different aspect ratios by creating different framing strategies while including ALL scenes from the original video.
 
     **Instructions:**
 
@@ -529,10 +541,10 @@ export const PROMPTS = {
 
     `,
 
-    /**
-     * YouTube Content Ideas Generation Prompt
-     */
-    youtubeIdeasPrompt: `ROL:
+  /**
+   * YouTube Content Ideas Generation Prompt
+   */
+  youtubeIdeasPrompt: `ROL:
 Eres un Estratega digital, diseñador gráfico experto en motion graphics en video, experto en anuncios de video para YouTube y Director Creativo que trabaja para WPP Media Solutions.
 
 OBJETIVO:
@@ -626,4 +638,133 @@ El JSON debe seguir exactamente esta estructura:
 }
 
 **IMPORTANTE:** Toda tu respuesta (los valores de cada campo del JSON) DEBE estar escrita en ESPAÑOL.`
+};
+
+export const COMPASS_INTELLIGENCE_PROMPTS = {
+  geoIntelligence: `Eres un experto en inteligencia geográfica y adaptación de contenido creativo para campañas de video digital.
+
+Con base en:
+- Contexto de campaña: {{compassContextJson}}
+- Top 30 zonas de demanda (macro): {{macroJson}}  
+- Top 20 micro-clusters de alta concentración: {{microJson}}
+
+Genera un análisis GeoKey que clasifique las mejores 5 zonas macro y las 5 mejores micro-oportunidades.
+
+IMPORTANTE: Tus estrategias e insights DEBEN enfocarse 100% en la CREATIVIDAD del video (adaptación de mensaje, elementos visuales, cultura local, narrativa, tono, pacing).
+CRÍTICO: NO des consejos genéricos como "usar jergas locales" o "mostrar lugares de la ciudad". Tienes que proporcionar EJEMPLOS ALTAMENTE ESPECÍFICOS Y TANGIBLES dependiendo de la zona exacta. Por ejemplo, si la zona es "Jalisco", recomienda modismos reales ("¿qué onda?", "ocupo"), lugares emblemáticos exactos, tradiciones, o estilos de música locales. Muestra conocimiento profundo del contexto cultural, lingüístico, gastronómico y visual de ESA región específica en tus estrategias.
+Piensa como un Director Creativo experto en la hiper-regionalización de México y LATAM. NUNCA hables de pauta, compra de medios o presupuestos.
+
+RETORNA ÚNICAMENTE este JSON exacto (sin markdown, sin explicaciones):
+{
+  "macro_estrategias": [
+    {
+      "zona": "Nombre descriptivo de la zona",
+      "audiencia": 150000,
+      "coordenada_central": "19.4326, -99.1332",
+      "estrategia": "Texto accionable de la estrategia para esta zona",
+      "prioridad": 1,
+      "insight_narrativo": "Frase narrativa de máx 2 líneas explicando por qué esta zona es relevante"
+    }
+  ],
+  "micro_oportunidades": [
+    {
+      "zona": "Nombre de ciudad/municipio",
+      "audiencia": 45000,
+      "coordenada_central": "19.4326, -99.1332",
+      "estrategia": "Texto accionable",
+      "prioridad": 1,
+      "insight_narrativo": "Frase narrativa breve"
+    }
+  ],
+  "insights_narrativos": [
+    {
+      "icono": "trending_up",
+      "titulo": "Mayor oportunidad en [nombre zona]",
+      "descripcion": "Texto de 2-3 líneas explicando la oportunidad específica"
+    },
+    {
+      "icono": "location_on",
+      "titulo": "Diferencias por lenguaje visual",
+      "descripcion": "Texto sobre diferencias regionales"
+    },
+    {
+      "icono": "people",
+      "titulo": "Oportunidad de adaptación regional",
+      "descripcion": "Texto sobre impacto de adaptación"
+    },
+    {
+      "icono": "play_circle_outline",
+      "titulo": "Contextos de consumo variados",
+      "descripcion": "Texto sobre dispositivos y plataformas por zona"
+    }
+  ]
+}
+
+REGLAS:
+- Responde ÚNICAMENTE con el JSON (sin markdown ni texto adicional).
+- CRÍTICO: Asegúrate de escapar correctamente todas las comillas dobles internas (usando \\") dentro de los valores de texto.
+- CRÍTICO: NO uses comas finales (trailing commas) en los arrays u objetos. El JSON debe ser 100% válido para JSON.parse().`,
+  channelIntelligence: `Eres un experto en estrategia de contenido creativo y categorías de YouTube.
+
+Contexto de campaña: {{compassContextJson}}
+Categorías seleccionadas: {{categoriesText}}
+
+Para cada categoría, analiza la afinidad del video con esa categoría y genera ideas de adaptación de contenido.
+
+IMPORTANTE: Tus recomendaciones e ideación DEBEN enfocarse 100% en la CREATIVIDAD del video (qué mostrar, mensajes, ritmo, formatos de anuncio en video, llamados a la acción, cultura) y NUNCA en la pauta, compra de medios, budgets, pujas o variables exclusivas de Google Ads. Eres un consultor creativo, no un Media Planner.
+
+RETORNA ÚNICAMENTE este JSON exacto:
+[
+  {
+    "categoria": "Tecnología",
+    "afinidad": "Muy alta",
+    "insights": ["Insight 1 sobre la categoría", "Insight 2"],
+    "evidencias": ["Evidencia 1 del video"],
+    "recomendaciones": ["Recomendación 1 accionable"],
+    "ideacion_adaptacion": [
+      "Idea de adaptación 1 para esta categoría específica",
+      "Idea de adaptación 2 con contexto de la zona o audiencia"
+    ]
+  }
+]
+
+REGLAS:
+- Responde ÚNICAMENTE con el JSON (sin markdown ni texto adicional).
+- CRÍTICO: Asegúrate de escapar correctamente todas las comillas dobles internas (usando \\") dentro de los valores de texto.
+- CRÍTICO: NO uses comas finales (trailing commas) en los arrays u objetos. El JSON debe ser 100% válido para JSON.parse().`,
+  prioritization: `Eres un consultor creativo experto en optimización de video para campañas digitales.
+
+Contexto completo: {{compassContextJson}}
+
+Con base en todos los datos analizados (evaluación creativa ABCD, geo intelligence y channel intelligence), genera entre 4 y 6 oportunidades de mejora priorizadas.
+
+RETORNA ÚNICAMENTE este JSON exacto:
+{
+  "pregunta": "¿Qué debería hacer ahora?",
+  "oportunidades": [
+    {
+      "titulo": "Título accionable de la oportunidad",
+      "evidencia": "Descripción clara del problema o hallazgo",
+      "recomendacion": "Acción concreta y específica a tomar",
+      "impacto": "Alto",
+      "esfuerzo": "Medio",
+      "prioridad": 1,
+      "tipo": "Creative",
+      "tiempo_referencia": "00:04 - 00:08"
+    }
+  ]
+}
+
+Reglas:
+- impacto: solo "Alto", "Medio" o "Bajo"
+- esfuerzo: solo "Alto", "Medio" o "Bajo"
+- prioridad: número del 1 al 6, sin repetir
+- tipo: "Creative" si viene del análisis ABCD, "Geo" si viene del análisis geográfico, "Categoría" si viene del channel intelligence
+- tiempo_referencia: solo si aplica al video (segmento específico), sino omitir
+
+REGLAS ADICIONALES:
+- Responde ÚNICAMENTE con el JSON (sin markdown ni texto adicional).
+- CRÍTICO: Asegúrate de escapar correctamente todas las comillas dobles internas (usando \\") dentro de los valores de texto.
+- CRÍTICO: NO uses comas finales (trailing commas) en los arrays u objetos. El JSON debe ser 100% válido para JSON.parse().
+}`
 };

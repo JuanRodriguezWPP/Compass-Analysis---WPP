@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { COMPASS_INTELLIGENCE_PROMPTS, PROMPTS } from './prompts';
 import { CONFIG } from './config';
 import { AppLogger } from './logging';
 import { StorageManager } from './storage';
@@ -57,9 +58,16 @@ export interface GenerateVariantsResponse {
     connection: string;
     direction: string;
   };
+  abcd_dimensiones?: {
+    attention_score: number;
+    branding_score: number;
+    connection_score: number;
+    direction_score: number;
+  };
   duration: string;
   strengths?: string[];
   weaknesses?: string[];
+  insight_principal?: string;
 }
 
 export class GenerationHelper {
@@ -317,10 +325,19 @@ export class GenerationHelper {
                   connection: String(abcd?.connection || '').trim(),
                   direction: String(abcd?.direction || '').trim()
                 },
+                abcd_dimensiones: result.abcd_dimensiones ? {
+                  attention_score: Number(result.abcd_dimensiones.attention_score) || 0,
+                  branding_score: Number(result.abcd_dimensiones.branding_score) || 0,
+                  connection_score: Number(result.abcd_dimensiones.connection_score) || 0,
+                  direction_score: Number(result.abcd_dimensiones.direction_score) || 0
+                } : undefined,
                 duration: GenerationHelper.calculateVariantDuration(
                   outputScenes,
                   avSegmentsMap
                 ),
+                strengths: result.strengths || [],
+                weaknesses: result.weaknesses || [],
+                insight_principal: result.insight_principal || result.description || ''
               };
               variants.push(variant);
               AppLogger.info(`✓ Variant #${variants.length} added: "${variant.title}"`);
@@ -608,40 +625,48 @@ TU TAREA:
     macroJson: string,
     microJson: string
   ): string {
-    const prompt = `Eres un experto en estrategia de medios y planificación geográfica de publicidad digital en Google.
-A continuación recibes:
-1. El contexto completo de la campaña y el video (evaluación creativa ABCD incluida).
-2. Un JSON con las macro zonas de mayor concentración de audiencia (Top 100 municipios).
-3. Un JSON con las micro oportunidades hiper-locales (Top 20 clústeres H3).
+    // Truncar el macroJson para evitar exceder el contexto del modelo.
+    // El Top 100 zonas es demasiado grande; limitamos a Top 30 para el análisis geo.
+    let macroJsonTruncated = macroJson;
+    try {
+      const macroParsed = JSON.parse(macroJson);
+      if (macroParsed && macroParsed.top_zonas_demanda && Array.isArray(macroParsed.top_zonas_demanda)) {
+        macroParsed.top_zonas_demanda = macroParsed.top_zonas_demanda.slice(0, 30);
+        macroJsonTruncated = JSON.stringify(macroParsed);
+        AppLogger.info(`Compass: GeoIntelligence macroJson truncado a ${macroParsed.top_zonas_demanda.length} zonas`);
+      }
+    } catch (e) {
+      AppLogger.warn(`Compass: GeoIntelligence - no se pudo parsear macroJson para truncar, usando original`);
+    }
 
-Tu tarea es responder en ESPAÑOL con un JSON que contenga:
-- "macro_estrategias": Array de objetos con los campos { zona, audiencia, coordenada_central, estrategia, prioridad }.
-  - Identifica las 5 zonas macro más estratégicas y describe cómo activar allí la campaña.
-- "micro_oportunidades": Array de objetos con los mismos campos.
-  - Identifica los 5 micro-clústeres más relevantes y describe qué activación hiper-local recomiendas.
+    // Truncar microJson a top 10 clusters
+    let microJsonTruncated = microJson;
+    try {
+      const microParsed = JSON.parse(microJson);
+      if (microParsed && microParsed.top_clusters && Array.isArray(microParsed.top_clusters)) {
+        microParsed.top_clusters = microParsed.top_clusters.slice(0, 10);
+        microJsonTruncated = JSON.stringify(microParsed);
+        AppLogger.info(`Compass: GeoIntelligence microJson truncado a ${microParsed.top_clusters.length} clusters`);
+      }
+    } catch (e) {
+      AppLogger.warn(`Compass: GeoIntelligence - no se pudo parsear microJson para truncar, usando original`);
+    }
 
-REGLAS:
-- Conecta las zonas con el contexto del video y la audiencia objetivo de la campaña.
-- Cada "estrategia" debe ser accionable, específica y en máximo 2 oraciones.
-- Responde ÚNICAMENTE con el JSON, sin markdown ni texto adicional.
-
-**Contexto de Campaña y Video (JSON):**
-${compassContextJson}
-
-**Macro Zonas (Top 100 Municipios):**
-${macroJson}
-
-**Micro Oportunidades (Top 20 Clústeres H3):**
-${microJson}`;
+    let prompt = COMPASS_INTELLIGENCE_PROMPTS.geoIntelligence;
+    prompt = prompt.replace('{{compassContextJson}}', compassContextJson);
+    prompt = prompt.replace('{{macroJson}}', macroJsonTruncated);
+    prompt = prompt.replace('{{microJson}}', microJsonTruncated);
 
     AppLogger.info('Compass: generateGeoIntelligence starting');
+    AppLogger.info(`Compass: GeoIntelligence prompt length: ${prompt.length} chars`);
     let response = VertexHelper.generate(prompt);
     response = response.trim();
     if (response.startsWith('```json')) response = response.substring(7);
     else if (response.startsWith('```')) response = response.substring(3);
     if (response.endsWith('```')) response = response.substring(0, response.length - 3);
     response = response.trim();
-    AppLogger.info(`Compass: GeoIntelligence Response: ${response}`);
+    AppLogger.info(`Compass: GeoIntelligence Response (primeros 500 chars): ${response.substring(0, 500)}`);
+    AppLogger.info(`Compass: GeoIntelligence Response length: ${response.length}`);
     return response;
   }
 
@@ -654,31 +679,9 @@ ${microJson}`;
     categories: string[]
   ): string {
     const categoriesText = categories.join(', ');
-    const prompt = `Eres un experto en planificación de medios digitales y contenido en YouTube y Google.
-Recibes el contexto completo de la campaña de video y una lista de categorías/canales seleccionados.
-
-Pregunta central: ¿En qué contextos funciona mejor este contenido publicitario?
-
-Para CADA categoría seleccionada, responde con un JSON con el siguiente array "contextos":
-[
-  {
-    "categoria": "Nombre de la categoría",
-    "afinidad": "Alta | Media | Baja — explicación de 1 línea del por qué",
-    "insights": ["Insight 1 relevante para esta categoría", "Insight 2"],
-    "evidencias": ["Evidencia 1 del video o la campaña que soporta el insight", "Evidencia 2"],
-    "recomendaciones": ["Recomendación accionable 1", "Recomendación accionable 2"]
-  }
-]
-
-REGLAS:
-- Conecta cada categoría con el contenido real del video y los objetivos de la campaña.
-- Responde ÚNICAMENTE con el JSON (el array "contextos"), sin markdown ni texto adicional.
-
-**Contexto de Campaña y Video (JSON):**
-${compassContextJson}
-
-**Categorías seleccionadas:**
-${categoriesText}`;
+    let prompt = COMPASS_INTELLIGENCE_PROMPTS.channelIntelligence;
+    prompt = prompt.replace('{{compassContextJson}}', compassContextJson);
+    prompt = prompt.replace('{{categoriesText}}', categoriesText);
 
     AppLogger.info('Compass: generateChannelIntelligence starting');
     let response = VertexHelper.generate(prompt);
@@ -696,34 +699,8 @@ ${categoriesText}`;
    * Con TODO el contexto acumulado, responde: ¿Qué debería hacer ahora?
    */
   static generatePrioritization(compassContextJson: string): string {
-    const prompt = `Eres un consultor estratégico experto en publicidad digital y optimización de campañas de video en Google.
-Recibes el análisis completo de una campaña de video, que incluye:
-- Contexto de la campaña y la marca.
-- Evaluación creativa ABCD.
-- Inteligencia geográfica (si aplica).
-- Inteligencia de categorías/canales (si aplica).
-
-Pregunta central: ¿Qué debería hacer el equipo de marketing AHORA para maximizar el impacto de esta campaña?
-
-Responde con un JSON con el array "oportunidades", con exactamente 5 oportunidades priorizadas:
-[
-  {
-    "titulo": "Título conciso y accionable de la oportunidad",
-    "evidencia": "Evidencia específica del análisis que justifica esta oportunidad",
-    "impacto": "Alto | Medio | Bajo",
-    "prioridad": 1,
-    "recomendacion": "Acción concreta, específica y ejecutable en máximo 2 oraciones"
-  }
-]
-
-REGLAS:
-- Ordena de mayor a menor impacto (prioridad 1 = la más urgente).
-- Cada recomendación debe ser concreta y no genérica.
-- Conecta cada oportunidad con datos específicos del análisis.
-- Responde ÚNICAMENTE con el JSON (el array "oportunidades"), sin markdown ni texto adicional.
-
-**Análisis Completo de la Campaña (JSON):**
-${compassContextJson}`;
+    let prompt = COMPASS_INTELLIGENCE_PROMPTS.prioritization;
+    prompt = prompt.replace('{{compassContextJson}}', compassContextJson);
 
     AppLogger.info('Compass: generatePrioritization starting');
     let response = VertexHelper.generate(prompt);

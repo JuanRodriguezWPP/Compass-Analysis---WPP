@@ -101,7 +101,16 @@ export class ApiCallsService implements ApiCalls {
           "branding": "The brand's name and logo appear in the last scene.",
           "connection": "Scene 1 creates an immediate emotional connection with the audience.",
           "direction": "Ends with a clear and compelling call to action."
-        }
+        },
+        "abcd_dimensiones": {
+          "attention_score": 85,
+          "branding_score": 90,
+          "connection_score": 75,
+          "direction_score": 80
+        },
+        "strengths": ["Gancho inicial muy dinámico", "Marca visible en el cierre"],
+        "weaknesses": ["La conexión emocional podría ser más fuerte"],
+        "insight_principal": "El video tiene una estructura sólida y elementos diferenciales que pueden generar alto impacto si se optimiza la narrativa central."
       }
     ];
     return of(mockData as any);
@@ -424,13 +433,34 @@ export class ApiCallsService implements ApiCalls {
     return new Observable<string>(subscriber => {
       setTimeout(() => {
         subscriber.next(JSON.stringify({
-          zonas: [{ 
-            zona: "Mock Zone", 
-            audiencia: 100000, 
-            coordenada_central: "19.4326,-99.1332", 
-            estrategia: "Target general", 
-            prioridad: 1 
-          }]
+          macro_estrategias: [{
+            zona: "Centro Norte",
+            audiencia: 150000,
+            coordenada_central: "19.4326,-99.1332",
+            estrategia: "Aumentar pauta en formatos cortos.",
+            prioridad: 1,
+            insight_narrativo: "El 60% de la audiencia aquí prefiere contenido dinámico."
+          }],
+          micro_oportunidades: [{
+            zona: "Monterrey Sur",
+            audiencia: 45000,
+            coordenada_central: "25.6866,-100.3161",
+            estrategia: "Pauta hiper-local en centros comerciales.",
+            prioridad: 2,
+            insight_narrativo: "Alta densidad de tráfico en fines de semana."
+          }],
+          insights_narrativos: [
+            {
+              icono: "trending_up",
+              titulo: "Mayor oportunidad en Centro Norte",
+              descripcion: "Esta agrupación presenta la mayor afinidad con el mensaje y el producto."
+            },
+            {
+              icono: "location_on",
+              titulo: "Diferencias por lenguaje visual",
+              descripcion: "La zona sur reacciona mejor a tomas de estilo de vida."
+            }
+          ]
         }));
         subscriber.complete();
       }, 1000);
@@ -448,7 +478,8 @@ export class ApiCallsService implements ApiCalls {
           afinidad: "Alta",
           insights: ["Insight 1"],
           evidencias: ["Evidencia 1"],
-          recomendaciones: ["Recomendación 1"]
+          recomendaciones: ["Recomendación 1"],
+          ideacion_adaptacion: ["Adaptar el inicio con un gancho tecnológico", "Usar jerga de la categoría"]
         }]));
         subscriber.complete();
       }, 1000);
@@ -461,11 +492,14 @@ export class ApiCallsService implements ApiCalls {
         subscriber.next(JSON.stringify({
           pregunta: "¿Qué debería hacer ahora?",
           oportunidades: [{
-            titulo: "Optimizar creatividades",
-            evidencia: "Score bajo",
+            titulo: "Optimización de Inicio",
+            evidencia: "Baja retención inicial",
             impacto: "Alto",
+            esfuerzo: "Medio",
             prioridad: 1,
-            recomendacion: "Ajustar cortes"
+            tipo: "Creative",
+            tiempo_referencia: "00:00 - 00:03",
+            recomendacion: "Añadir gancho visual"
           }]
         }));
         subscriber.complete();

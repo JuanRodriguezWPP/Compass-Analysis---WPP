@@ -140,20 +140,31 @@ export class VertexHelper {
     ) as VertexAiGeminiResponseCandidate[];
 
     const content: string[] = [];
-    response.forEach(candidate => {
+    for (const candidate of response) {
       if (candidate.error) {
+        // If quota exhausted (429) inside the JSON response, retry
+        if ((candidate.error as any).code === 429 || (candidate.error as any).status === 'RESOURCE_EXHAUSTED') {
+          AppLogger.info(
+            `Streaming chunk returned 429 RESOURCE_EXHAUSTED. Waiting ${Number(CONFIG.vertexAi.quotaLimitDelay) / 1000}s to retry...`
+          );
+          Utilities.sleep(CONFIG.vertexAi.quotaLimitDelay);
+          return VertexHelper.multimodalGenerate(prompt, gcsVideoUrl, modelParams, csvBase64);
+        }
         throw new Error(JSON.stringify(response));
       }
       if (
-        'SAFETY' === candidate.candidates![0].finishReason ||
-        'BLOCKLIST' === candidate.candidates![0].finishReason
+        candidate.candidates && candidate.candidates[0] &&
+        ('SAFETY' === candidate.candidates[0].finishReason ||
+        'BLOCKLIST' === candidate.candidates[0].finishReason)
       ) {
         throw new Error(
           `Request was blocked as it triggered API safety filters. ${prompt}`
         );
       }
-      content.push(candidate.candidates![0].content.parts[0].text);
-    });
+      if (candidate.candidates && candidate.candidates[0] && candidate.candidates[0].content && candidate.candidates[0].content.parts) {
+        content.push(candidate.candidates[0].content.parts[0].text);
+      }
+    }
     const contentText = content.join('');
     if (!contentText) {
       throw new Error(JSON.stringify(response));

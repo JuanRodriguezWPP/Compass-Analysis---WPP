@@ -92,6 +92,12 @@ export interface GenerateVariantsResponse {
     connection: string;
     direction: string;
   };
+  abcd_dimensiones?: {
+    attention_score: number;
+    branding_score: number;
+    connection_score: number;
+    direction_score: number;
+  };
   duration: string;
   variants?: VariantFormats;
   render_settings?: RenderSettings;
@@ -100,6 +106,7 @@ export interface GenerateVariantsResponse {
   original_format?: FormatType;
   strengths?: string[];
   weaknesses?: string[];
+  insight_principal?: string;
 }
 
 /** Response structure for YouTube Content Ideas. */
@@ -158,6 +165,13 @@ export interface CompassGeoOportunidad {
   coordenada_central: string;
   estrategia: string;
   prioridad: number;
+  insight_narrativo?: string;
+}
+
+export interface CompassGeoInsight {
+  icono: string;
+  titulo: string;
+  descripcion: string;
 }
 
 export interface CompassCategoriaContexto {
@@ -166,14 +180,25 @@ export interface CompassCategoriaContexto {
   insights: string[];
   evidencias: string[];
   recomendaciones: string[];
+  ideacion_adaptacion?: string[];
 }
 
 export interface CompassOportunidad {
   titulo: string;
   evidencia: string;
   impacto: 'Alto' | 'Medio' | 'Bajo';
+  esfuerzo: 'Alto' | 'Medio' | 'Bajo';
   prioridad: number;
   recomendacion: string;
+  tipo: 'Creative' | 'Geo' | 'Categoría';
+  tiempo_referencia?: string;
+}
+
+export interface CompassAbcdDimensiones {
+  attention_score: number;
+  branding_score: number;
+  connection_score: number;
+  direction_score: number;
 }
 
 export interface CompassData {
@@ -201,19 +226,23 @@ export interface CompassData {
     score: number;
     score_max: number;
     score_label: string;
+    abcd_dimensiones?: CompassAbcdDimensiones;
     abcd: {
       attention: string;
       branding: string;
       connection: string;
       direction: string;
+      [key: string]: string;
     };
     strengths: string[];
     weaknesses: string[];
     descripcion: string;
+    insight_principal?: string;
   } | null;
   geo_intelligence: {
     macro_estrategias: CompassGeoOportunidad[];
     micro_oportunidades: CompassGeoOportunidad[];
+    insights_narrativos: CompassGeoInsight[];
   } | null;
   channel_intelligence: {
     pregunta: string;
